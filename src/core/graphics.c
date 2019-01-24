@@ -9,6 +9,8 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
 
 #include "palette.h"
 
@@ -28,6 +30,7 @@ static const long PALETTE_DATA = 0x03c9;
 // Set palette
 void setPalette(Graphics* g) {
 
+    const char* palette = _getPalette();
     int16 i = 0;
 
     // Generate simple palette
@@ -63,6 +66,7 @@ Graphics* createGraphics() {
     // Set defaults
     g->width = FB_WIDTH;
     g->height = FB_HEIGHT;
+    g->size = g->width*g->height;
 
     // Set video mode to 320x200 256 colors
     _setvideomode(_MRES256COLOR);
@@ -70,4 +74,47 @@ Graphics* createGraphics() {
     setPalette(g);
 
     return g;
+}
+
+
+// Draw frame to the screen
+void drawFrame(Graphics* g) {
+
+    memcpy((void*)VGA_POS, (const void*)g->frame, g->size);
+}
+
+
+// Clear screen
+void clearScreen(Graphics* g, uint8 color) {
+
+    memset(g->frame, color, g->size);
+}
+
+
+// Draw a line
+void drawLine(Graphics* g, int16 x1, int16 y1, 
+    int16 x2, int16 y2, uint8 color) {
+
+    // (Bresenham's line algorithm)
+    // TODO: Clip
+
+    int16 dx = abs(x2-x1), sx = x1<x2 ? 1 : -1;
+    int16 dy = abs(y2-y1), sy = y1<y2 ? 1 : -1; 
+    int16 err = (dx > dy ? dx : -dy) / 2;
+    int16 e2;
+     
+    while(true) {
+
+        // Put pixel
+        if(y1 < g->height-1 && y1 >= 0 &&
+            x1 <  g->width-1 && x1 >= 0 )
+            g->frame[y1 * g->width + x1] = color;
+        
+        if (x1==x2 && y1==y2) 
+            break;
+
+        e2 = err;
+        if (e2 >-dx) { err -= dy; x1 += sx; }
+        if (e2 < dy) { err += dx; y1 += sy; }
+    }
 }

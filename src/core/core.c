@@ -18,6 +18,20 @@ static void vsync() {
 }
 
 
+// Initialize scenes
+static void initScenes(Core* c) {
+
+    uint8 i;
+    for(i=0; i < c->sceneCount; ++ i) {
+
+        if(c->scenes[i]->init != NULL) {
+
+            c->scenes[i]->init();
+        }
+    }
+}
+
+
 // Dispose
 static void dispose(Core* c) {
 
@@ -47,6 +61,7 @@ Core createAppCore() {
     c.activeScene = NULL;
     c.frameSkip = 1;
     c.stepCount = 0;
+    c.running = true;
 
     // Create graphics
     c.g = createGraphics();
@@ -56,11 +71,13 @@ Core createAppCore() {
 
 
 // Add a scene
-void coreAddScene(Core*c, Scene* s) {
+void coreAddScene(Core*c, Scene* s, bool makeActive) {
 
     if(c->sceneCount >= MAX_SCENES) return;
 
     c->scenes[c->sceneCount ++] = s;
+    if(makeActive)
+        c->activeScene = s;
 }
 
 
@@ -69,6 +86,10 @@ void coreLoop(Core*c) {
 
     bool updateFrame =false;
 
+    // Initialize scenes before looping
+    initScenes(c);
+
+    // Start the main loop
     c->stepCount = 0;
     while(c->running) {
 
@@ -76,17 +97,19 @@ void coreLoop(Core*c) {
         vsync();
 
         // Check frame skipping
-        updateFrame = true;
+        updateFrame = false;
         if(c->frameSkip > 0 
            && ++ c->stepCount > c->frameSkip) {
 
             c->stepCount = 0;
-            updateFrame = false;
+            updateFrame = true;
         }
 
         // Update & render the active scene
-        if(updateFrame && c->activeScene != NULL) {
+        if(updateFrame 
+            && c->activeScene != NULL) {
 
+        
             // Update
             if(c->activeScene->update != NULL) {
 
@@ -99,6 +122,9 @@ void coreLoop(Core*c) {
                 c->activeScene->draw(c->g);
             }
         }
+
+        // Draw frame
+        drawFrame(c->g);
     }
 
     // Dispose

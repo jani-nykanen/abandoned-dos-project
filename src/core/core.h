@@ -39,7 +39,7 @@ typedef struct {
 Core createAppCore();
 
 // Add a scene
-void coreAddScene(Core*c, Scene* s);
+void coreAddScene(Core*c, Scene* s, bool makeActive);
 
 // Enter the main loop
 void coreLoop(Core*c);

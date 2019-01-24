@@ -260,3 +260,11 @@ static const char palette[] = {
 255,255,170,
 255,255,255,
 };
+
+
+// Required so that vscode won't show
+// errors that do not even exist
+static const char* _getPalette() {
+
+    return palette;
+}
