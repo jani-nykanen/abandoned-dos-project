@@ -67,6 +67,8 @@ Graphics* createGraphics() {
     g->width = FB_WIDTH;
     g->height = FB_HEIGHT;
     g->size = g->width*g->height;
+    // Clear to black
+    clearScreen(g, 0);
 
     // Set video mode to 320x200 256 colors
     _setvideomode(_MRES256COLOR);
@@ -117,4 +119,22 @@ void drawLine(Graphics* g, int16 x1, int16 y1,
         if (e2 >-dx) { err -= dy; x1 += sx; }
         if (e2 < dy) { err += dx; y1 += sy; }
     }
+}
+
+
+// Fill a rectangle
+void fillRect(Graphics* g, int16 dx, int16 dy, 
+    int16 w, int16 h, uint8 col) {
+
+    int16 y;
+    uint16 offset;
+
+    // Draw
+    offset = g->width*dy + dx;
+    for(y = dy; y < dy+h; ++ y) {
+
+        memset(g->frame + offset, col, w);
+        offset += g->width;
+    }
+
 }

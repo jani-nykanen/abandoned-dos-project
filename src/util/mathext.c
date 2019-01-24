@@ -24,12 +24,12 @@ int16 fixedSin(int16 angle) {
     angle = negMod(angle, 360);
 
     // Check value from the table
-    return _getSineTable() [angle];
+    return FIXED_SINE [angle];
 }
 
 
 // Fixed cosine
 int16 fixedCos(int16 angle) {
 
-    return fixedSin(angle + 180);
+    return fixedSin(angle + 90);
 }

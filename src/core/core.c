@@ -98,8 +98,8 @@ void coreLoop(Core*c) {
 
         // Check frame skipping
         updateFrame = false;
-        if(c->frameSkip > 0 
-           && ++ c->stepCount > c->frameSkip) {
+        if(c->frameSkip == 0 || 
+           ++ c->stepCount > c->frameSkip) {
 
             c->stepCount = 0;
             updateFrame = true;
@@ -113,7 +113,7 @@ void coreLoop(Core*c) {
             // Update
             if(c->activeScene->update != NULL) {
 
-                c->activeScene->update(c->stepCount +1);
+                c->activeScene->update(c->frameSkip +1);
             }
 
             // Draw

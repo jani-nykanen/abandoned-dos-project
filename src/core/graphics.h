@@ -31,4 +31,8 @@ void clearScreen(Graphics* g, uint8 color);
 void drawLine(Graphics* g, int16 x1, int16 y1, 
     int16 x2, int16 y2, uint8 color);
 
+// Fill a rectangle
+void fillRect(Graphics* g, int16 x, int16 y, 
+    int16 w, int16 h, uint8 col);
+
 #endif // __GRAPHICS_H__
