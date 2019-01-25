@@ -79,6 +79,16 @@ Graphics* createGraphics() {
 }
 
 
+// Destroy graphics
+void destroyGraphics(Graphics* g) {
+
+    if(g == NULL) return;
+
+    free(g->frame);
+    free(g);
+}
+
+
 // Draw frame to the screen
 void drawFrame(Graphics* g) {
 

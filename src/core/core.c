@@ -47,7 +47,8 @@ static void dispose(Core* c) {
     }
 
     // Destroy components
-    free(c->g);
+    destroyGraphics(c->g);
+    destroyInputManager(c->input);
 }
 
 
@@ -63,8 +64,13 @@ Core createAppCore() {
     c.stepCount = 0;
     c.running = true;
 
-    // Create graphics
+    // Create a graphics object
     c.g = createGraphics();
+
+    // Create an input manager
+    c.input = createInputManager();
+    // Create an event manager
+    c.evMan = createEventManager(c.input);
 
     return c;   
 }
@@ -113,7 +119,8 @@ void coreLoop(Core*c) {
             // Update
             if(c->activeScene->update != NULL) {
 
-                c->activeScene->update(c->frameSkip +1);
+                c->activeScene->update(&c->evMan, 
+                    c->frameSkip +1);
             }
 
             // Draw

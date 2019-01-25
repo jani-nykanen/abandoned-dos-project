@@ -21,6 +21,9 @@ typedef struct {
 // Create a graphics component
 Graphics* createGraphics();
 
+// Destroy graphics
+void destroyGraphics(Graphics* g);
+
 // Draw frame to the screen
 void drawFrame(Graphics* g);
 

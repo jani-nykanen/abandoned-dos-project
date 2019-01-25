@@ -9,6 +9,7 @@
 #include "scene.h"
 #include "types.h"
 #include "graphics.h"
+#include "input.h"
 
 #define MAX_SCENES 16
 
@@ -29,6 +30,11 @@ typedef struct {
     int16 frameSkip;
     // Step count
     int16 stepCount;
+
+    // Input manager
+    InputManager* input;
+    // Event manager
+    EventManager evMan;
 
     // Is running
     bool running;

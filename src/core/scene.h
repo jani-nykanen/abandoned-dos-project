@@ -6,23 +6,24 @@
 
 #include "types.h"
 #include "graphics.h"
+#include "eventman.h"
 
 #define SCENE_NAME_LENGTH 32
 
 // Types
 typedef char NameString[SCENE_NAME_LENGTH];
 typedef void (*Function) (void);
-typedef void (*FunctionParamInt) (int16);
+typedef void (*FunctionParamEventManInt) (EventManager*, int16);
 typedef void (*FunctionParamGraph) (Graphics*g);
 
 // Scene type
 typedef struct {
 
     // Methods
-    Function           init;
-    FunctionParamInt   update;
-    FunctionParamGraph draw;
-    Function           dispose;
+    Function                   init;
+    FunctionParamEventManInt   update;
+    FunctionParamGraph         draw;
+    Function                   dispose;
 
     // Name
     NameString name;
