@@ -107,21 +107,32 @@ void clearScreen(Graphics* g, uint8 color) {
 void drawLine(Graphics* g, int16 x1, int16 y1, 
     int16 x2, int16 y2, uint8 color) {
 
-    // (Bresenham's line algorithm)
-    // TODO: Clip
+    int16 dx = abs(x2-x1);
+    int16 sx = x1 < x2 ? 1 : -1;
 
-    int16 dx = abs(x2-x1), sx = x1<x2 ? 1 : -1;
-    int16 dy = abs(y2-y1), sy = y1<y2 ? 1 : -1; 
+    int16 dy = abs(y2-y1);
+    int16 sy = y1 < y2 ? 1 : -1; 
+
     int16 err = (dx > dy ? dx : -dy) / 2;
     int16 e2;
      
     while(true) {
+
+        // See if it's time to stop
+        /*
+        if((sx < 0 && x1 < 0) ||
+           (sy < 0 && y1 < 0) || 
+           (sx > 0 && x1 >= g->width) ||
+           (sy > 0 && y1 >= g->height))
+           break;
+        */
 
         // Put pixel
         if(y1 < g->height-1 && y1 >= 0 &&
             x1 <  g->width-1 && x1 >= 0 )
             g->frame[y1 * g->width + x1] = color;
         
+        // Goal reached
         if (x1==x2 && y1==y2) 
             break;
 
@@ -138,6 +149,16 @@ void fillRect(Graphics* g, int16 dx, int16 dy,
 
     int16 y;
     uint16 offset;
+
+    // Clip
+    if(dy < 0) dy = 0;
+    if(dx < 0) dx = 0;
+    if(dx >= g->width ||
+       dy >= g->height ) return;
+    if(dx+w >= g->width)
+        w = g->width-dx;
+    if(dy+h >= g->height)  
+        h = g->height-dy;
 
     // Draw
     offset = g->width*dy + dx;

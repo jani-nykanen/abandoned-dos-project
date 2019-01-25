@@ -12,6 +12,7 @@
 static int16 angle;
 // Triangle radius
 static int16 triRadius = 64;
+static int16 oldRadius = 64;
 
 
 // Draw a test triangle
@@ -45,7 +46,7 @@ static void gameInit() {
 // Update
 static void gameUpdate(EventManager* evMan, int16 steps) {
 
-    const DELTA = 8;
+    const int16 DELTA = 1;
 
     // Check arrow keys
     if(inputGetButton(evMan->input, ArrowLeft) == Down) {
@@ -59,13 +60,14 @@ static void gameUpdate(EventManager* evMan, int16 steps) {
     angle = negMod(angle, 360);
 
     // Scale
-    if(inputGetButton(evMan->input, ButtonFire1) == Pressed) {
+    oldRadius = triRadius;
+    if(inputGetButton(evMan->input, ButtonFire1) == Down) {
 
-        triRadius += DELTA;
+        triRadius += DELTA *steps;
     }
-    else if(inputGetButton(evMan->input, ButtonFire2) == Pressed) {
+    else if(inputGetButton(evMan->input, ButtonFire2) == Down) {
 
-        triRadius -= DELTA;
+        triRadius -= DELTA *steps;
     }
 }
 
@@ -73,13 +75,17 @@ static void gameUpdate(EventManager* evMan, int16 steps) {
 // Draw
 static void gameDraw(Graphics* g) {
 
+    clearScreen(g, 0);
+
     // Draw a test triangle
+    /*
     fillRect(g, 
-        160-triRadius-1, 
-        100-triRadius-1,
-        triRadius*2  +2,
-        triRadius*2  +2, 
+        160-oldRadius-1, 
+        100-oldRadius-1,
+        oldRadius*2  +2,
+        oldRadius*2  +2, 
         0);
+        */
     drawTestTriangle(g);
 }
 

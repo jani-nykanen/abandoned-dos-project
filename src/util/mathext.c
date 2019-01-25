@@ -33,3 +33,14 @@ int16 fixedCos(int16 angle) {
 
     return fixedSin(angle + 90);
 }
+
+
+// Maximum & minimum for short
+int16 maxInt(int16 a, int16 b) {
+
+    return a < b ? b : a;
+}
+int16 minInt(int16 a, int16 b) {
+
+    return a < b ? a : b;
+}

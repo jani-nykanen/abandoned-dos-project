@@ -25,4 +25,8 @@ int16 fixedSin(int16 angle);
 // Fixed cosine
 int16 fixedCos(int16 angle);
 
+// Maximum & minimum for short
+int16 maxInt(int16 a, int16 b);
+int16 minInt(int16 a, int16 b);
+
 #endif //__MATHEXT_H__
