@@ -9,14 +9,6 @@
 // Fixed-point precision
 #define FIXED_PREC 128
 
-// Fixed-point vector
-typedef struct {
-    
-    int16 x;
-    int16 y;
-
-} Vector2;
-
 // Negative modulo
 int16 negMod(int16 m, int16 n);
 

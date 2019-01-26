@@ -13,6 +13,7 @@
 #include <stdbool.h>
 
 #include "palette.h"
+#include "../util/mathext.h"
 
 // Framebuffer size (we can asssume
 // no other size is wanted)
@@ -107,14 +108,46 @@ void clearScreen(Graphics* g, uint8 color) {
 void drawLine(Graphics* g, int16 x1, int16 y1, 
     int16 x2, int16 y2, uint8 color) {
 
-    int16 dx = abs(x2-x1);
+    int16 dx, dy;
     int16 sx = x1 < x2 ? 1 : -1;
-
-    int16 dy = abs(y2-y1);
     int16 sy = y1 < y2 ? 1 : -1; 
 
-    int16 err = (dx > dy ? dx : -dy) / 2;
+    int16 err;
     int16 e2;
+
+    int16 k, b;
+
+    // Check if outside the screen
+    if((x1 < 0 && x2 < 0) ||
+       (y1 < 0 && y2 < 0) ||
+       (x1 >= g->width && x2 >= g->width) ||
+       (y1 >= g->height && y2 >= g->height)) {
+
+        return;
+    }
+
+    // Clip left side
+    if(x1 != x2 && (x1 < 0 || x2 < 0)) {
+
+        k = (y2-y1)*FIXED_PREC / (x2-x1) * sx;
+        if(x2 < 0) {
+
+            b = y2 - (k *x2)/FIXED_PREC;
+            x2 = 0;
+            y2 = b ;
+        }
+        else {
+
+            b = y1 - (k *x1)/FIXED_PREC;
+            x1 = 0;
+            y1 = b;
+        }
+    }
+
+    // Compute error
+    dx = abs(x2-x1);
+    dy = abs(y2-y1);
+    err = (dx > dy ? dx : -dy) / 2;
      
     while(true) {
 

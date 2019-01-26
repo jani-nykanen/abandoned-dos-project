@@ -14,6 +14,9 @@ static int16 angle;
 static int16 triRadius = 64;
 static int16 oldRadius = 64;
 
+// Triangle position
+static Vector2 trianglePos;
+
 
 // Draw a test triangle
 static void drawTestTriangle(Graphics* g) {
@@ -29,9 +32,9 @@ static void drawTestTriangle(Graphics* g) {
     C.x = (fixedCos(angle+240) * triRadius) / FIXED_PREC;
     C.y = (fixedSin(angle+240) * triRadius) / FIXED_PREC;
 
-    drawLine(g, 160+A.x, 100+A.y, 160+B.x, 100+B.y, 255);
-    drawLine(g, 160+C.x, 100+C.y, 160+B.x, 100+B.y, 255);
-    drawLine(g, 160+A.x, 100+A.y, 160+C.x, 100+C.y, 255);
+    drawLine(g, trianglePos.x+A.x, trianglePos.y+A.y, trianglePos.x+B.x, trianglePos.y+B.y, 255);
+    drawLine(g, trianglePos.x+C.x, trianglePos.y+C.y, trianglePos.x+B.x, trianglePos.y+B.y, 255);
+    drawLine(g, trianglePos.x+A.x, trianglePos.y+A.y, trianglePos.x+C.x, trianglePos.y+C.y, 255);
 }
 
 
@@ -40,6 +43,9 @@ static void gameInit() {
 
     // Set defaults
     angle = 0;
+
+    trianglePos.x = 64;
+    trianglePos.y = 100;
 }
 
 

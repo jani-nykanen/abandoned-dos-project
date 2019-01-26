@@ -11,4 +11,12 @@ typedef unsigned char  uint8;
 typedef unsigned short uint16;
 typedef signed short   int16;
 
+// Fixed-point vector
+typedef struct {
+    
+    int16 x;
+    int16 y;
+
+} Vector2;
+
 #endif // __TYPES_H__
