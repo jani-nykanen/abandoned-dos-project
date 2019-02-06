@@ -3,13 +3,24 @@
 
 #include "eventman.h"
 
+#include "core.h"
+
 
 // Create event manager
-EventManager createEventManager(InputManager* input) {
+EventManager createEventManager(void* core, 
+    InputManager* input) {
 
     EventManager evMan;
 
     evMan.input = input;
+    evMan.core = core;
 
     return evMan;
+}
+
+
+// Terminate
+void terminate(EventManager* evMan) {
+
+    coreTerminate((Core*)evMan->core);
 }

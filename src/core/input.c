@@ -6,10 +6,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-// Button key codes
-static const short BUTTON_KEY_CODES[] = {
+// Arrow keycodes
+static const short ARROW_KEY_CODES[] = {
     77, 72, 75, 80,
-    44, 45, 28, 1,
 };
 
 // Reference to the current active
@@ -71,9 +70,8 @@ static void far interrupt handler() {
 // Get button value from an array
 static char getValueFromArr(uint8* arr, bool* readArr, int16 id) {
 
-    int16 s = BUTTON_KEY_CODES[id];
-    uint8 state = arr[s];
-    bool read = readArr[s];
+    uint8 state = arr[id];
+    bool read = readArr[id];
     uint8 ret = 0;
 
     if(state == Down) {
@@ -84,7 +82,7 @@ static char getValueFromArr(uint8* arr, bool* readArr, int16 id) {
 
         ret = read ? Up : Released;
     }
-    readArr[s] = true;
+    readArr[id] = true;
 
     return ret;
 }
@@ -138,27 +136,25 @@ void destroyInputManager(InputManager* input) {
 
 
 // Get button
-uint8 inputGetButton(InputManager* input, uint8 button) {
+uint8 getButtonState(InputManager* input, uint8 button) {
 
-    uint8 ret = Up;
-
-    if(input == NULL || button > MAX_BUTTON)
+    if(input == NULL || button > KEY_BUFFER_SIZE)
         return Up;
 
-    // If arrow key
-    if(button < 4) {
+    // Get normal key
+    return getValueFromArr(
+        input->normalKeys, 
+        input->normalRead, button);
+}
 
-        // Get extended
-        ret = getValueFromArr(
+
+// Get arrow key state
+uint8 getArrowKeyState(InputManager* input, uint8 d) {
+
+    if(input == NULL || d > 4)
+        return Up;
+
+    return getValueFromArr(
             input->extKeys, 
-            input->extRead, button);
-    }
-    else {
-
-        // Get normal
-        ret = getValueFromArr(
-            input->normalKeys, 
-            input->normalRead, button);
-    }
-    return ret;
+            input->extRead, ARROW_KEY_CODES[d]);
 }

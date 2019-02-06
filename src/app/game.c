@@ -55,11 +55,11 @@ static void gameUpdate(EventManager* evMan, int16 steps) {
     const int16 DELTA = 1;
 
     // Check arrow keys
-    if(inputGetButton(evMan->input, ArrowLeft) == Down) {
+    if(getArrowKeyState(evMan->input, ArrowLeft) == Down) {
 
         angle -= 2*steps;
     }
-    else if(inputGetButton(evMan->input, ArrowRight) == Down) {
+    else if(getArrowKeyState(evMan->input, ArrowRight) == Down) {
 
         angle += 2*steps;
     }
@@ -67,13 +67,19 @@ static void gameUpdate(EventManager* evMan, int16 steps) {
 
     // Scale
     oldRadius = triRadius;
-    if(inputGetButton(evMan->input, ButtonFire1) == Down) {
+    if(getButtonState(evMan->input, 44) == Down) {
 
         triRadius += DELTA *steps;
     }
-    else if(inputGetButton(evMan->input, ButtonFire2) == Down) {
+    else if(getButtonState(evMan->input, 45) == Down) {
 
         triRadius -= DELTA *steps;
+    }
+
+    // Escape (TEMP!)
+    if(getButtonState(evMan->input, 1) == Pressed) {
+
+        terminate(evMan);
     }
 }
 
@@ -82,16 +88,6 @@ static void gameUpdate(EventManager* evMan, int16 steps) {
 static void gameDraw(Graphics* g) {
 
     clearScreen(g, 0);
-
-    // Draw a test triangle
-    /*
-    fillRect(g, 
-        160-oldRadius-1, 
-        100-oldRadius-1,
-        oldRadius*2  +2,
-        oldRadius*2  +2, 
-        0);
-        */
     drawTestTriangle(g);
 }
 

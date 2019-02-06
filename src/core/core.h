@@ -42,7 +42,7 @@ typedef struct {
 } Core;
 
 // Create a new application core
-Core createAppCore();
+void createAppCore(Core* c);
 
 // Add a scene
 void coreAddScene(Core*c, Scene* s, bool makeActive);

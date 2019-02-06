@@ -11,10 +11,16 @@ typedef struct {
 
     // Input manager
     InputManager* input;
+    // Core
+    void* core;
 
 }EventManager;
 
 // Create event manager
-EventManager createEventManager(InputManager* input);
+EventManager createEventManager(void* core,
+    InputManager* input);
+
+// Terminate
+void terminate(EventManager* evMan);
 
 #endif // __EVMAN_H__

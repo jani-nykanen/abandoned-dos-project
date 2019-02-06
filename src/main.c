@@ -9,10 +9,14 @@
 // Main function
 void main() {
 
+    Core c;
+    Scene game;
+
     // Create application
-    Core c = createAppCore();
+    createAppCore(&c);
+    
     // Add scenes
-    Scene game = getGameScene();
+    game = getGameScene();
     coreAddScene(&c, &game, true);
 
     // Loop

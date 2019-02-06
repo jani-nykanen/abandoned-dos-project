@@ -53,31 +53,27 @@ static void dispose(Core* c) {
 
 
 // Create a new application core
-Core createAppCore() {
-
-    Core c;
+void createAppCore(Core* c) {
 
     // Set defaults
-    c.sceneCount = 0;
-    c.activeScene = NULL;
-    c.frameSkip = 1;
-    c.stepCount = 0;
-    c.running = true;
+    c->sceneCount = 0;
+    c->activeScene = NULL;
+    c->frameSkip = 1;
+    c->stepCount = 0;
+    c->running = true;
 
     // Create a graphics object
-    c.g = createGraphics();
+    c->g = createGraphics();
 
     // Create an input manager
-    c.input = createInputManager();
+    c->input = createInputManager();
     // Create an event manager
-    c.evMan = createEventManager(c.input);
-
-    return c;   
+    c->evMan = createEventManager((void*)c, c->input);
 }
 
 
 // Add a scene
-void coreAddScene(Core*c, Scene* s, bool makeActive) {
+void coreAddScene(Core* c, Scene* s, bool makeActive) {
 
     if(c->sceneCount >= MAX_SCENES) return;
 

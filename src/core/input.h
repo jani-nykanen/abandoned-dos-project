@@ -11,19 +11,14 @@
 #include <bios.h>
 
 #define KEY_BUFFER_SIZE 0x60
-#define MAX_BUTTON 7
 
-// Button enumerations
+// Arrow key enumerations
 enum {
 
     ArrowRight = 0,
     ArrowUp = 1,
     ArrowLeft = 2,
     ArrowDown = 3,
-    ButtonFire1 = 4,
-    ButtonFire2 = 5,
-    ButtonStart = 6,
-    ButtonCancel = 7,
 };
 
 // Button states
@@ -64,6 +59,9 @@ InputManager* createInputManager();
 void destroyInputManager(InputManager* input);
 
 // Get button
-uint8 inputGetButton(InputManager* input, uint8 button);
+uint8 getButtonState(InputManager* input, uint8 button);
+
+// Get arrow key state
+uint8 getArrowKeyState(InputManager* input, uint8 d);
 
 #endif // __INPUT__

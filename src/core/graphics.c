@@ -31,14 +31,13 @@ static const long PALETTE_DATA = 0x03c9;
 // Set palette
 void setPalette(Graphics* g) {
 
-    const char* palette = _getPalette();
     int16 i = 0;
 
     // Generate simple palette
     outp(PALETTE_INDEX,0);
     for(i = 0; i < 256*3 ;  ++ i) {
 
-        outp(PALETTE_DATA, palette[i]/4);
+        outp(PALETTE_DATA, PALETTE[i]/4);
     }
 }
 
@@ -115,8 +114,6 @@ void drawLine(Graphics* g, int16 x1, int16 y1,
     int16 err;
     int16 e2;
 
-    int16 k, b;
-
     // Check if outside the screen
     if((x1 < 0 && x2 < 0) ||
        (y1 < 0 && y2 < 0) ||
@@ -126,39 +123,12 @@ void drawLine(Graphics* g, int16 x1, int16 y1,
         return;
     }
 
-    // Clip left side
-    if(x1 != x2 && (x1 < 0 || x2 < 0)) {
-
-        k = (y2-y1)*FIXED_PREC / (x2-x1) * sx;
-        if(x2 < 0) {
-
-            b = y2 - (k *x2)/FIXED_PREC;
-            x2 = 0;
-            y2 = b ;
-        }
-        else {
-
-            b = y1 - (k *x1)/FIXED_PREC;
-            x1 = 0;
-            y1 = b;
-        }
-    }
-
     // Compute error
     dx = abs(x2-x1);
     dy = abs(y2-y1);
     err = (dx > dy ? dx : -dy) / 2;
      
     while(true) {
-
-        // See if it's time to stop
-        /*
-        if((sx < 0 && x1 < 0) ||
-           (sy < 0 && y1 < 0) || 
-           (sx > 0 && x1 >= g->width) ||
-           (sy > 0 && y1 >= g->height))
-           break;
-        */
 
         // Put pixel
         if(y1 < g->height-1 && y1 >= 0 &&
