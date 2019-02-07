@@ -20,7 +20,7 @@ EventManager createEventManager(void* core,
 
 
 // Terminate
-void terminate(EventManager* evMan) {
+void eventTerminate(EventManager* evMan) {
 
     coreTerminate((Core*)evMan->core);
 }

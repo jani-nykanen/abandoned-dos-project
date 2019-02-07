@@ -11,10 +11,13 @@ typedef struct {
 
     // Framebuffer
     uint8* frame;
+
     // Framebuffer size
-    int width;
-    int height;
-    int size;
+    Vector2 frameDim;
+    short frameSize; // Size in bytes
+
+    // Viewport size
+    Rect viewport;
 
 } Graphics;
 
@@ -25,17 +28,26 @@ Graphics* createGraphics();
 void destroyGraphics(Graphics* g);
 
 // Draw frame to the screen
-void drawFrame(Graphics* g);
+void gDrawFrame(Graphics* g);
 
 // Clear screen
-void clearScreen(Graphics* g, uint8 color);
+void gClearScreen(Graphics* g, uint8 color);
+
+// Clear viewport
+void gClearView(Graphics* g, uint8 color);
+
+// Set viewport
+void gSetViewport(Graphics* g, short x, short y, 
+    short w, short h);
+// Reset viewport
+void gResetViewport(Graphics* g);
 
 // Draw a line
-void drawLine(Graphics* g, int16 x1, int16 y1, 
+void gDrawLine(Graphics* g, int16 x1, int16 y1, 
     int16 x2, int16 y2, uint8 color);
 
 // Fill a rectangle
-void fillRect(Graphics* g, int16 x, int16 y, 
+void gFillRect(Graphics* g, int16 x, int16 y, 
     int16 w, int16 h, uint8 col);
 
 #endif // __GRAPHICS_H__

@@ -127,7 +127,7 @@ void coreLoop(Core*c) {
         }
 
         // Draw frame
-        drawFrame(c->g);
+        gDrawFrame(c->g);
     }
 
     // Dispose

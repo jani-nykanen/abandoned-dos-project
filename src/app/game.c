@@ -32,9 +32,9 @@ static void drawTestTriangle(Graphics* g) {
     C.x = (fixedCos(angle+240) * triRadius) / FIXED_PREC;
     C.y = (fixedSin(angle+240) * triRadius) / FIXED_PREC;
 
-    drawLine(g, trianglePos.x+A.x, trianglePos.y+A.y, trianglePos.x+B.x, trianglePos.y+B.y, 255);
-    drawLine(g, trianglePos.x+C.x, trianglePos.y+C.y, trianglePos.x+B.x, trianglePos.y+B.y, 255);
-    drawLine(g, trianglePos.x+A.x, trianglePos.y+A.y, trianglePos.x+C.x, trianglePos.y+C.y, 255);
+    gDrawLine(g, trianglePos.x+A.x, trianglePos.y+A.y, trianglePos.x+B.x, trianglePos.y+B.y, 255);
+    gDrawLine(g, trianglePos.x+C.x, trianglePos.y+C.y, trianglePos.x+B.x, trianglePos.y+B.y, 255);
+    gDrawLine(g, trianglePos.x+A.x, trianglePos.y+A.y, trianglePos.x+C.x, trianglePos.y+C.y, 255);
 }
 
 
@@ -44,7 +44,7 @@ static void gameInit() {
     // Set defaults
     angle = 0;
 
-    trianglePos.x = 64;
+    trianglePos.x = 132;
     trianglePos.y = 100;
 }
 
@@ -55,31 +55,33 @@ static void gameUpdate(EventManager* evMan, int16 steps) {
     const int16 DELTA = 1;
 
     // Check arrow keys
-    if(getArrowKeyState(evMan->input, ArrowLeft) == Down) {
+    if(inputGetArrow(evMan->input, ArrowLeft) == Down) {
 
         angle -= 2*steps;
+        trianglePos.x -= 1*steps;
     }
-    else if(getArrowKeyState(evMan->input, ArrowRight) == Down) {
+    else if(inputGetArrow(evMan->input, ArrowRight) == Down) {
 
         angle += 2*steps;
+        trianglePos.x += 1*steps;
     }
     angle = negMod(angle, 360);
 
     // Scale
     oldRadius = triRadius;
-    if(getButtonState(evMan->input, 44) == Down) {
+    if(inputGetKey(evMan->input, 44) == Down) {
 
         triRadius += DELTA *steps;
     }
-    else if(getButtonState(evMan->input, 45) == Down) {
+    else if(inputGetKey(evMan->input, 45) == Down) {
 
         triRadius -= DELTA *steps;
     }
 
     // Escape (TEMP!)
-    if(getButtonState(evMan->input, 1) == Pressed) {
+    if(inputGetKey(evMan->input, 1) == Pressed) {
 
-        terminate(evMan);
+        eventTerminate(evMan);
     }
 }
 
@@ -87,7 +89,19 @@ static void gameUpdate(EventManager* evMan, int16 steps) {
 // Draw
 static void gameDraw(Graphics* g) {
 
-    clearScreen(g, 0);
+    gResetViewport(g);
+    gClearScreen(g, 0);
+
+    // Set viewport
+    gSetViewport(g, 4, 4, 224, 192);
+    gClearView(g, 3);
+
+    // Draw rectangle inside a triangle
+    gFillRect(g, trianglePos.x-triRadius/2, 
+                 trianglePos.y-triRadius/2,
+                 triRadius, triRadius, 224);
+
+    // Draw a test triangle
     drawTestTriangle(g);
 }
 

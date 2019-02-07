@@ -28,8 +28,40 @@ static const long PALETTE_INDEX = 0x03c8;
 static const long PALETTE_DATA = 0x03c9;
 
 
+// Clip a rectangle
+static bool clipRect(Graphics* g, short* x, short* y, 
+    short* w, short* h) {
+
+    // Left
+    if(*x < g->viewport.x) {
+
+        *w -= g->viewport.x - (*x);
+        *x = g->viewport.x;
+    }
+    // Right
+    if(*x+*w >= g->viewport.x+g->viewport.w) {
+
+        *w -= (*x+*w) - (g->viewport.x + g->viewport.w);
+    }
+
+    // Top
+    if(*y < g->viewport.y) {
+
+        *h -= g->viewport.y - (*y);
+        *y = g->viewport.y;
+    }
+    // Bottom
+    if(*y+*h >= g->viewport.y+g->viewport.h) {
+
+        *h -= (*y+*h) - (g->viewport.y + g->viewport.h);
+    }
+
+    return *w > 0 && *h > 0;
+}
+
+
 // Set palette
-void setPalette(Graphics* g) {
+static void setPalette(Graphics* g) {
 
     int16 i = 0;
 
@@ -64,16 +96,22 @@ Graphics* createGraphics() {
     }
 
     // Set defaults
-    g->width = FB_WIDTH;
-    g->height = FB_HEIGHT;
-    g->size = g->width*g->height;
+    g->frameDim.x = FB_WIDTH;
+    g->frameDim.y = FB_HEIGHT;
+    g->frameSize = g->frameDim.x*g->frameDim.y;
     // Clear to black
-    clearScreen(g, 0);
+    gClearScreen(g, 0);
 
     // Set video mode to 320x200 256 colors
     _setvideomode(_MRES256COLOR);
     // Set palette
     setPalette(g);
+
+    // Set default viewport
+    g->viewport.x = 0;
+    g->viewport.y = 0;
+    g->viewport.w = FB_WIDTH;
+    g->viewport.h = FB_HEIGHT;
 
     return g;
 }
@@ -84,28 +122,64 @@ void destroyGraphics(Graphics* g) {
 
     if(g == NULL) return;
 
+    // Reset graphics mode
+    _setvideomode( _DEFAULTMODE );
+
+    // Free allocated data
     free(g->frame);
     free(g);
 }
 
 
 // Draw frame to the screen
-void drawFrame(Graphics* g) {
+void gDrawFrame(Graphics* g) {
 
-    memcpy((void*)VGA_POS, (const void*)g->frame, g->size);
+    memcpy((void*)VGA_POS, (const void*)g->frame, g->frameSize);
 }
 
 
 // Clear screen
-void clearScreen(Graphics* g, uint8 color) {
+void gClearScreen(Graphics* g, uint8 color) {
 
-    memset(g->frame, color, g->size);
+    memset(g->frame, color, g->frameSize);
+}
+
+
+// Clear viewport
+void gClearView(Graphics* g, uint8 color) {
+
+    gFillRect(g, g->viewport.x, g->viewport.y,
+        g->viewport.w, g->viewport.h, color);
+}
+
+
+// Set viewport
+void gSetViewport(Graphics* g, short x, short y, 
+    short w, short h) {
+
+    g->viewport.x = x;
+    g->viewport.y = y;
+    g->viewport.w = w;
+    g->viewport.h = h;
+}
+
+
+// Reset viewport
+void gResetViewport(Graphics* g) {
+
+    g->viewport.x = 0;
+    g->viewport.y = 0;
+    g->viewport.w = FB_WIDTH;
+    g->viewport.h = FB_HEIGHT;
 }
 
 
 // Draw a line
-void drawLine(Graphics* g, int16 x1, int16 y1, 
+void gDrawLine(Graphics* g, int16 x1, int16 y1, 
     int16 x2, int16 y2, uint8 color) {
+
+    int16 endx = g->viewport.x + g->viewport.w;
+    int16 endy = g->viewport.y + g->viewport.h;
 
     int16 dx, dy;
     int16 sx = x1 < x2 ? 1 : -1;
@@ -117,8 +191,8 @@ void drawLine(Graphics* g, int16 x1, int16 y1,
     // Check if outside the screen
     if((x1 < 0 && x2 < 0) ||
        (y1 < 0 && y2 < 0) ||
-       (x1 >= g->width && x2 >= g->width) ||
-       (y1 >= g->height && y2 >= g->height)) {
+       (x1 >= g->frameDim.x && x2 >= g->frameDim.x) ||
+       (y1 >= g->frameDim.y && y2 >= g->frameDim.y)) {
 
         return;
     }
@@ -131,9 +205,9 @@ void drawLine(Graphics* g, int16 x1, int16 y1,
     while(true) {
 
         // Put pixel
-        if(y1 < g->height-1 && y1 >= 0 &&
-            x1 <  g->width-1 && x1 >= 0 )
-            g->frame[y1 * g->width + x1] = color;
+        if(y1 < endy && y1 >= g->viewport.y &&
+            x1 < endx && x1 >= g->viewport.x)
+            g->frame[y1 * g->frameDim.x + x1] = color;
         
         // Goal reached
         if (x1==x2 && y1==y2) 
@@ -147,28 +221,22 @@ void drawLine(Graphics* g, int16 x1, int16 y1,
 
 
 // Fill a rectangle
-void fillRect(Graphics* g, int16 dx, int16 dy, 
+void gFillRect(Graphics* g, int16 dx, int16 dy, 
     int16 w, int16 h, uint8 col) {
 
     int16 y;
     uint16 offset;
 
     // Clip
-    if(dy < 0) dy = 0;
-    if(dx < 0) dx = 0;
-    if(dx >= g->width ||
-       dy >= g->height ) return;
-    if(dx+w >= g->width)
-        w = g->width-dx;
-    if(dy+h >= g->height)  
-        h = g->height-dy;
+    if(!clipRect(g, &dx, &dy, &w, &h))
+        return;
 
     // Draw
-    offset = g->width*dy + dx;
+    offset = g->frameDim.x*dy + dx;
     for(y = dy; y < dy+h; ++ y) {
 
         memset(g->frame + offset, col, w);
-        offset += g->width;
+        offset += g->frameDim.x;
     }
 
 }

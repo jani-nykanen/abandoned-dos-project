@@ -21,6 +21,6 @@ EventManager createEventManager(void* core,
     InputManager* input);
 
 // Terminate
-void terminate(EventManager* evMan);
+void eventTerminate(EventManager* evMan);
 
 #endif // __EVMAN_H__

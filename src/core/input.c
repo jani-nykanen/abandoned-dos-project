@@ -136,7 +136,7 @@ void destroyInputManager(InputManager* input) {
 
 
 // Get button
-uint8 getButtonState(InputManager* input, uint8 button) {
+uint8 inputGetKey(InputManager* input, uint8 button) {
 
     if(input == NULL || button > KEY_BUFFER_SIZE)
         return Up;
@@ -149,7 +149,7 @@ uint8 getButtonState(InputManager* input, uint8 button) {
 
 
 // Get arrow key state
-uint8 getArrowKeyState(InputManager* input, uint8 d) {
+uint8 inputGetArrow(InputManager* input, uint8 d) {
 
     if(input == NULL || d > 4)
         return Up;

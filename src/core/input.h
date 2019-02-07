@@ -59,9 +59,9 @@ InputManager* createInputManager();
 void destroyInputManager(InputManager* input);
 
 // Get button
-uint8 getButtonState(InputManager* input, uint8 button);
+uint8 inputGetKey(InputManager* input, uint8 button);
 
 // Get arrow key state
-uint8 getArrowKeyState(InputManager* input, uint8 d);
+uint8 inputGetArrow(InputManager* input, uint8 d);
 
 #endif // __INPUT__
