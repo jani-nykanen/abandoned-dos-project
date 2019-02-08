@@ -4,7 +4,7 @@
 #ifndef __GAME_H__
 #define __GAME_H__
 
-#include "../core/scene.h"
+#include "../../core/scene.h"
 
 // Get game scene
 Scene getGameScene();

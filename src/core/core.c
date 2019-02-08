@@ -67,8 +67,10 @@ void createAppCore(Core* c) {
 
     // Create an input manager
     c->input = createInputManager();
+    // Create vpad
+    c->vpad = createVpad();
     // Create an event manager
-    c->evMan = createEventManager((void*)c, c->input);
+    c->evMan = createEventManager((void*)c, c->input, &c->vpad);
 }
 
 
@@ -95,9 +97,7 @@ void coreLoop(Core*c) {
     c->stepCount = 0;
     while(c->running) {
 
-        // Wait for the vertical sync
-        vsync();
-
+        
         // Check frame skipping
         updateFrame = false;
         if(c->frameSkip == 0 || 
@@ -111,7 +111,8 @@ void coreLoop(Core*c) {
         if(updateFrame 
             && c->activeScene != NULL) {
 
-        
+            // Update virtual gamepad
+            vpadUpdate(&c->vpad, c->input);
             // Update
             if(c->activeScene->update != NULL) {
 
@@ -126,12 +127,23 @@ void coreLoop(Core*c) {
             }
         }
 
+        // Wait for the vertical sync
+        vsync();
+
         // Draw frame
         gDrawFrame(c->g);
     }
 
     // Dispose
     dispose(c);
+}
+
+
+// Initialize virtual gamepad
+void coreInitVpad(Core* c, void (*cb)(Vpad*)) {
+
+    if(cb != NULL)
+        cb(&c->vpad);
 }
 
 

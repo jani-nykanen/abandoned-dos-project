@@ -44,3 +44,10 @@ int16 minInt(int16 a, int16 b) {
 
     return a < b ? a : b;
 }
+
+
+// Absolute value
+int16 extAbs(int16 a) {
+
+    return a >= 0 ? a : -a;
+}

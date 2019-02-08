@@ -21,4 +21,7 @@ int16 fixedCos(int16 angle);
 int16 maxInt(int16 a, int16 b);
 int16 minInt(int16 a, int16 b);
 
+// Absolute value
+int16 extAbs(int16 a);
+
 #endif //__MATHEXT_H__

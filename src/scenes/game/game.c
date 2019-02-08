@@ -6,7 +6,7 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "../util/mathext.h"
+#include "../../util/mathext.h"
 
 // Triangle angle
 static int16 angle;
@@ -53,14 +53,15 @@ static void gameInit() {
 static void gameUpdate(EventManager* evMan, int16 steps) {
 
     const int16 DELTA = 1;
+    Vpad* vpad = evMan->vpad;
 
     // Check arrow keys
-    if(inputGetArrow(evMan->input, ArrowLeft) == Down) {
+    if(vpad->stick.x < 0) {
 
         angle -= 2*steps;
         trianglePos.x -= 1*steps;
     }
-    else if(inputGetArrow(evMan->input, ArrowRight) == Down) {
+    else if(vpad->stick.x > 0) {
 
         angle += 2*steps;
         trianglePos.x += 1*steps;
@@ -69,11 +70,11 @@ static void gameUpdate(EventManager* evMan, int16 steps) {
 
     // Scale
     oldRadius = triRadius;
-    if(inputGetKey(evMan->input, 44) == Down) {
+    if(vpad->buttons[0].state == Down) {
 
         triRadius += DELTA *steps;
     }
-    else if(inputGetKey(evMan->input, 45) == Down) {
+    else if(vpad->buttons[1].state == Down) {
 
         triRadius -= DELTA *steps;
     }

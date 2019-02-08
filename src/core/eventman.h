@@ -5,12 +5,15 @@
 #define __EVMAN_H__
 
 #include "input.h"
+#include "vpad.h"
 
 // Event manager
 typedef struct {
 
     // Input manager
     InputManager* input;
+    // Virtual gamepad
+    Vpad* vpad;
     // Core
     void* core;
 
@@ -18,7 +21,7 @@ typedef struct {
 
 // Create event manager
 EventManager createEventManager(void* core,
-    InputManager* input);
+    InputManager* input, Vpad* vpad);
 
 // Terminate
 void eventTerminate(EventManager* evMan);

@@ -10,6 +10,7 @@
 #include "types.h"
 #include "graphics.h"
 #include "input.h"
+#include "vpad.h"
 
 #define MAX_SCENES 16
 
@@ -33,6 +34,8 @@ typedef struct {
 
     // Input manager
     InputManager* input;
+    // "Gamepad"
+    Vpad vpad;
     // Event manager
     EventManager evMan;
 
@@ -49,6 +52,9 @@ void coreAddScene(Core*c, Scene* s, bool makeActive);
 
 // Enter the main loop
 void coreLoop(Core*c);
+
+// Initialize virtual gamepad
+void coreInitVpad(Core* c, void (*cb)(Vpad*));
 
 // Terminate
 void coreTerminate(Core* c);

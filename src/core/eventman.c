@@ -8,12 +8,13 @@
 
 // Create event manager
 EventManager createEventManager(void* core, 
-    InputManager* input) {
+    InputManager* input, Vpad* vpad) {
 
     EventManager evMan;
 
     evMan.input = input;
     evMan.core = core;
+    evMan.vpad = vpad;
 
     return evMan;
 }
