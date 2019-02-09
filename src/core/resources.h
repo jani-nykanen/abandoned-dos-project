@@ -50,7 +50,7 @@ ResourceList* createEmptyResourceList();
 void* rsGetResource(ResourceList* rs, const char* name);
 
 // Add a bitmap
-bool rsAddBitmap(ResourceList* rs, const char* path);
+bool rsAddBitmap(ResourceList* rs, const char* path, const char* name);
 
 // Destroy
 void destroyResList(ResourceList* rs);

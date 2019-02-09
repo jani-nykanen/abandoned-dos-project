@@ -19,16 +19,18 @@ static void vsync() {
 
 
 // Initialize scenes
-static void initScenes(Core* c) {
+static int16 initScenes(Core* c) {
 
     uint8 i;
     for(i=0; i < c->sceneCount; ++ i) {
 
         if(c->scenes[i]->init != NULL) {
 
-            c->scenes[i]->init();
+            if(c->scenes[i]->init() != 0)
+                return 1;
         }
     }
+    return 0;
 }
 
 
@@ -52,6 +54,15 @@ static void dispose(Core* c) {
 }
 
 
+// Initialize graphics
+static int16 initGraphics(Core* c) {
+
+    // Create a graphics object
+    c->g = createGraphics();
+    return c->g != NULL ? 0 : 1;
+}
+
+
 // Create a new application core
 void createAppCore(Core* c) {
 
@@ -62,15 +73,13 @@ void createAppCore(Core* c) {
     c->stepCount = 0;
     c->running = true;
 
-    // Create a graphics object
-    c->g = createGraphics();
-
     // Create an input manager
     c->input = createInputManager();
     // Create vpad
     c->vpad = createVpad();
     // Create an event manager
-    c->evMan = createEventManager((void*)c, c->input, &c->vpad);
+    c->evMan = createEventManager(
+        (void*)c, c->input, &c->vpad);
 }
 
 
@@ -91,7 +100,16 @@ void coreLoop(Core*c) {
     bool updateFrame =false;
 
     // Initialize scenes before looping
-    initScenes(c);
+    if(initScenes(c) != 0) {
+
+        c->running = false;
+    }
+
+    // Initialize graphics
+    if(initGraphics(c) != 0) {
+
+        exit(1);
+    }
 
     // Start the main loop
     c->stepCount = 0;

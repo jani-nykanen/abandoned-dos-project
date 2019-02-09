@@ -46,7 +46,7 @@ Bitmap* createBitmap(uint16 w, uint16 h, uint8* data) {
 // Load a bitmap
 Bitmap* loadBitmap(const char* path) {
 
-    uint8 w, h;
+    uint16 w, h;
     Bitmap* bmp;
 
     // Open file
@@ -58,14 +58,19 @@ Bitmap* loadBitmap(const char* path) {
     }
 
     // Read size
-    fread(&w, sizeof(uint8),1, f);
-    fread(&h, sizeof(uint8),1, f);
+    fread(&w, sizeof(uint16), 1, f);
+    fread(&h, sizeof(uint16), 1, f);
 
     // Allocate memory
     bmp = createBitmap(w, h, NULL);
+    if(bmp == NULL) {
+
+        printf("Failed to create a bitmap!");
+        return NULL;
+    }
 
     // Read data
-    fread(bmp->data, sizeof(char), w*h, f);
+    fread(bmp->data, sizeof(uint8), w*h, f);
 
     // Close file
     fclose(f);

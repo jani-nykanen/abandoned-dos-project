@@ -48,7 +48,7 @@ void* rsGetResource(ResourceList* rs, const char* name) {
 
 
 // Add a bitmap
-bool rsAddBitmap(ResourceList* rs, const char* path) {
+bool rsAddBitmap(ResourceList* rs, const char* path, const char* name) {
 
     Bitmap* bmp;
     if(rs == NULL || rs->count >= RES_MAX)
@@ -60,9 +60,14 @@ bool rsAddBitmap(ResourceList* rs, const char* path) {
         return false;
     }
 
+    // Copy name
+    snprintf(rs->res[rs->count].name, RES_NAME_LENGTH, "%s", name);
+
+    // Add resource
     rs->res[rs->count].data = (void*)bmp;
     rs->res[rs->count].type = ResBitmap;
     ++ rs->count;
+    
     return true;
 }
 

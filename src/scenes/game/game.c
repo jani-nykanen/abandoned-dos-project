@@ -5,8 +5,11 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
 
 #include "../../util/mathext.h"
+#include "../../core/resources.h"
 
 // Triangle angle
 static int16 angle;
@@ -16,6 +19,9 @@ static int16 oldRadius = 64;
 
 // Triangle position
 static Vector2 trianglePos;
+
+// Game resources
+static ResourceList* res;
 
 
 // Draw a test triangle
@@ -39,13 +45,29 @@ static void drawTestTriangle(Graphics* g) {
 
 
 // Initialize
-static void gameInit() {
+static int16 gameInit() {
+
+    bool cond;
+
+    // Create an empty resource list
+    res = createEmptyResourceList();
+    if(res == NULL) {
+
+        return 1;
+    }
+    // Load resources
+    cond = rsAddBitmap(res, "ASSETS/BITMAPS/FONT.BIN", "font");
+    if(!cond) {
+
+        return 1;
+    }
 
     // Set defaults
     angle = 0;
-
     trianglePos.x = 132;
     trianglePos.y = 100;
+
+    return 0;
 }
 
 
@@ -80,7 +102,7 @@ static void gameUpdate(EventManager* evMan, int16 steps) {
     }
 
     // Escape (TEMP!)
-    if(inputGetKey(evMan->input, 1) == Pressed) {
+    if(vpad->buttons[4].state == Pressed) {
 
         eventTerminate(evMan);
     }
@@ -110,6 +132,8 @@ static void gameDraw(Graphics* g) {
 // Dispose
 static void gameDispose() {
 
+    // Destroy content
+    destroyResList(res);
 }
 
 

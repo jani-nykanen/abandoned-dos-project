@@ -10,23 +10,17 @@
 
 #define SCENE_NAME_LENGTH 32
 
-// Types
-typedef char NameString[SCENE_NAME_LENGTH];
-typedef void (*Function) (void);
-typedef void (*FunctionParamEventManInt) (EventManager*, int16);
-typedef void (*FunctionParamGraph) (Graphics*g);
-
 // Scene type
 typedef struct {
 
     // Methods
-    Function                   init;
-    FunctionParamEventManInt   update;
-    FunctionParamGraph         draw;
-    Function                   dispose;
+    int16 (*init)    (void);
+    void  (*update)  (EventManager*, int16);
+    void  (*draw)    (Graphics*);
+    void  (*dispose) (void);
 
     // Name
-    NameString name;
+    char name [SCENE_NAME_LENGTH];
 
 } Scene;
 

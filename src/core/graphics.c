@@ -84,7 +84,7 @@ Graphics* createGraphics() {
     if(g == NULL) {
 
         printf("malloc error.\n");
-        exit(1);
+        return NULL;
     }
 
     // Create a framebuffer
@@ -92,7 +92,7 @@ Graphics* createGraphics() {
     if(g->frame == NULL) {
 
         printf("malloc error.\n");
-        exit(1);
+        return NULL;
     }
 
     // Set defaults
