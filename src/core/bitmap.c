@@ -30,7 +30,7 @@ Bitmap* createBitmap(uint16 w, uint16 h, uint8* data) {
     // Copy data (if any)
     if(data != NULL) {
 
-        for(; i < w*h; ++ i) {
+        for(i=0; i < w*h; ++ i) {
 
             bmp->data[i] = data[i];
         }

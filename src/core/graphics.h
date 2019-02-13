@@ -5,6 +5,7 @@
 #define __GRAPHICS_H__
 
 #include "types.h"
+#include "bitmap.h"
 
 // Graphics type
 typedef struct {
@@ -49,5 +50,8 @@ void gDrawLine(Graphics* g, int16 x1, int16 y1,
 // Fill a rectangle
 void gFillRect(Graphics* g, int16 x, int16 y, 
     int16 w, int16 h, uint8 col);
+
+// Draw a bitmap fast (= ignoring alpha)
+void gDrawBitmapFast(Graphics* g, Bitmap* bmp, int16 x, int16 y);
 
 #endif // __GRAPHICS_H__

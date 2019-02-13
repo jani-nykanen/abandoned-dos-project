@@ -60,6 +60,45 @@ static bool clipRect(Graphics* g, short* x, short* y,
 }
 
 
+// Clip (general)
+static bool clip(Graphics* g, int16* sx, int16* sy, int16* sw, int16* sh, 
+    int16* dx, int16* dy) {
+
+    int16 ow, oh;
+
+    // Left
+    ow = *sw;
+    if(*dx < g->viewport.x) {
+
+        *sw -= g->viewport.x - (*dx);
+        *sx += ow-*sw;
+        *dx = g->viewport.x;
+    }
+    // Right
+    if(*dx+*sw >= g->viewport.x+g->viewport.w) {
+
+         *sw -= (*dx+*sw) - (g->viewport.x + g->viewport.w); 
+    }
+
+    // Top
+    oh = *sh;
+    if(*dy < g->viewport.y) {
+
+        *sh -= g->viewport.y - (*dy);
+        *sy += oh-*sh;
+        *dy = g->viewport.y;
+    }
+    // Bottom
+    if(*dy+*sh >= g->viewport.y+g->viewport.h) {
+
+        *sh -= (*dy+*sh) - (g->viewport.y + g->viewport.h);
+    }
+
+    return *sw > 0 && *sh > 0;
+}
+
+
+
 // Set palette
 static void setPalette(Graphics* g) {
 
@@ -239,4 +278,33 @@ void gFillRect(Graphics* g, int16 dx, int16 dy,
         offset += g->frameDim.x;
     }
 
+}
+
+
+// Draw a bitmap fast (= ignoring alpha)
+void gDrawBitmapFast(Graphics* g, Bitmap* bmp, int16 dx, int16 dy) {
+
+    int16 y;
+    int16 sx = 0;
+    int16 sy = 0;
+    int16 sw = bmp->width;
+    int16 sh = bmp->height;
+    uint16 offset;
+    uint16 boff;
+
+    if(g == NULL || bmp == NULL) return;
+
+    // Clip
+    if(!clip(g, &sx, &sy, &sw, &sh, &dx, &dy))
+        return;
+
+    // Copy lines
+    offset = g->frameDim.x*dy + dx;
+    boff = bmp->width*sy + sx;
+    for(y = dy; y < dy+sh; ++ y) {
+
+        memcpy(g->frame + offset, bmp->data + boff, sw);
+        offset += g->frameDim.x;
+        boff += bmp->width;
+    }
 }

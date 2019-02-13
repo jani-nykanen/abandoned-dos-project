@@ -22,6 +22,8 @@ static Vector2 trianglePos;
 
 // Game resources
 static ResourceList* res;
+// Bitmaps
+static Bitmap* bmpFont;
 
 
 // Draw a test triangle
@@ -61,6 +63,9 @@ static int16 gameInit() {
 
         return 1;
     }
+
+    // Get bitmaps
+    bmpFont = (Bitmap*)rsGetResource(res, "font");
 
     // Set defaults
     angle = 0;
@@ -118,6 +123,9 @@ static void gameDraw(Graphics* g) {
     // Set viewport
     gSetViewport(g, 4, 4, 224, 192);
     gClearView(g, 3);
+
+    // Draw test bitmap
+    gDrawBitmapFast(g, bmpFont, 16, 16);
 
     // Draw rectangle inside a triangle
     gFillRect(g, trianglePos.x-triRadius/2, 
