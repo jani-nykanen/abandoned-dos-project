@@ -18,10 +18,12 @@ int conv_bitmap(const char* in, const char* out, bool dither) {
     const int DIVISOR2 = 85;
 
     // Load surface
+    SDL_Init(SDL_INIT_EVERYTHING);
+    IMG_Init(IMG_INIT_PNG);
     SDL_Surface* surf = IMG_Load(in);
     if(surf == NULL) {
         
-        printf("Failed to load a bitmap in %s!\n",in);
+        printf("Failed to load a bitmap in %s\nERR: %s!\n",in, IMG_GetError());
         return 1;
     }
 

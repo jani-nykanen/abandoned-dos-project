@@ -5,3 +5,5 @@ git add git.sh
 git add tools
 git add build.sh
 git add build.bat
+git add dev
+git add ASSETS
