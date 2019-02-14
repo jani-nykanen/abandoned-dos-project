@@ -284,11 +284,16 @@ void gFillRect(Graphics* g, int16 dx, int16 dy,
 // Draw a bitmap fast (= ignoring alpha)
 void gDrawBitmapFast(Graphics* g, Bitmap* bmp, int16 dx, int16 dy) {
 
+    gDrawBitmapRegionFast(g, bmp, 0, 0, bmp->width, bmp->height,
+        dx, dy);
+}
+
+
+// Draw a bitmap region fast (= ignoring alpha)
+void gDrawBitmapRegionFast(Graphics* g, Bitmap* bmp, 
+    int16 sx, int16 sy, int16 sw, int16 sh, int16 dx, int16 dy) {
+
     int16 y;
-    int16 sx = 0;
-    int16 sy = 0;
-    int16 sw = bmp->width;
-    int16 sh = bmp->height;
     uint16 offset;
     uint16 boff;
 
@@ -306,5 +311,51 @@ void gDrawBitmapFast(Graphics* g, Bitmap* bmp, int16 dx, int16 dy) {
         memcpy(g->frame + offset, bmp->data + boff, sw);
         offset += g->frameDim.x;
         boff += bmp->width;
+    }
+}
+
+
+// Draw text fast (ignoring alpha)
+void gDrawTextFast(Graphics* g, Bitmap* font, const char* text, 
+    int16 dx, int16 dy, bool center) {
+
+    uint8 len = strlen((const char*)text);
+
+    int16 x = dx;
+    int16 y = dy;
+    uint16 cw = font->width / 16;
+    uint16 ch = cw;
+    int16 i;
+    uint8 c;
+    int16 sx, sy;
+
+    // Center
+    if(center) {
+
+        dx -= cw*len/2;
+        x = dx;
+    }
+
+    // Draw characters
+    for(i = 0; i < len; ++ i) {
+
+        c = text[i];
+
+        // Newline
+        if(c == '\n') {
+
+            x = dx;
+            y += ch;
+            continue;
+        }
+
+        sx = c % 16;
+        sy = c / 16;
+
+        // Draw char
+        gDrawBitmapRegionFast(g, font, sx*cw, sy*ch, 
+            cw, ch, x, y);
+
+        x += cw;
     }
 }

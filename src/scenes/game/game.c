@@ -93,6 +93,14 @@ static void gameUpdate(EventManager* evMan, int16 steps) {
         angle += 2*steps;
         trianglePos.x += 1*steps;
     }
+    if(vpad->stick.y < 0) {
+
+        trianglePos.y -= 1*steps;
+    }
+    else if(vpad->stick.y > 0) {
+
+        trianglePos.y += 1*steps;
+    }
     angle = negMod(angle, 360);
 
     // Scale
@@ -120,17 +128,19 @@ static void gameDraw(Graphics* g) {
     gResetViewport(g);
     gClearScreen(g, 0);
 
+    // "Hello world!" & more text
+    gDrawTextFast(g, bmpFont, "Hello goat!",320-(320-224-4)/2, 16, true);
+
+    gDrawTextFast(g, bmpFont, "Life is\nawwwsom!",224+8, 32, false);
+
     // Set viewport
     gSetViewport(g, 4, 4, 224, 192);
     gClearView(g, 3);
 
     // Draw test bitmap
-    gDrawBitmapFast(g, bmpFont, 16, 16);
-
-    // Draw rectangle inside a triangle
-    gFillRect(g, trianglePos.x-triRadius/2, 
-                 trianglePos.y-triRadius/2,
-                 triRadius, triRadius, 224);
+    gDrawBitmapRegionFast(g, bmpFont, 32,0, 64,64, 
+        trianglePos.x-32,
+        trianglePos.y-32);
 
     // Draw a test triangle
     drawTestTriangle(g);

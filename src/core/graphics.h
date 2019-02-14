@@ -54,4 +54,12 @@ void gFillRect(Graphics* g, int16 x, int16 y,
 // Draw a bitmap fast (= ignoring alpha)
 void gDrawBitmapFast(Graphics* g, Bitmap* bmp, int16 x, int16 y);
 
+// Draw a bitmap region fast (= ignoring alpha)
+void gDrawBitmapRegionFast(Graphics* g, Bitmap* bmp, 
+    int16 sx, int16 sy, int16 sw, int16 sh, int16 dx, int16 dy);
+
+// Draw text fast (ignoring alpha)
+void gDrawTextFast(Graphics* g, Bitmap* font, const char* text, 
+    int16 x, int16 y, bool center);
+
 #endif // __GRAPHICS_H__
