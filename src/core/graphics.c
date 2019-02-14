@@ -288,6 +288,50 @@ void gFillRect(Graphics* g, int16 dx, int16 dy,
 }
 
 
+
+// Draw a rectangle that is not filled
+void gDrawRect(Graphics* g, int16 dx, int16 dy, 
+    int16 w, int16 h, uint8 col) {
+
+    int16 ox = dx;
+    int16 oy = dy;
+    uint16 offset;
+    int16 y;
+
+    // Clip
+    if(!clipRect(g, &dx, &dy, &w, &h))
+        return;
+
+    // Top line
+    if(dy == oy) {
+
+        offset = g->frameDim.x*dy + dx;
+        memset(g->frame + offset, col, w);
+    }
+    // Bottom line
+    if(dy+h >= 0) {
+
+        offset = g->frameDim.x*(dy+h-1) + dx;
+        memset(g->frame + offset, col, w);
+    }
+
+    // Left colum
+    if(dx == ox) {
+        for(y = dy+1; y < dy+h-1; ++ y) {
+
+            g->frame[g->frameDim.x*y + dx] = col;
+        }
+    }
+    // Right colum
+    if(dx+w >= 0) {
+        for(y = dy+1; y < dy+h-1; ++ y) {
+
+            g->frame[g->frameDim.x*y + dx+w-1] = col;
+        }
+    }
+}
+
+
 // Draw a bitmap fast (= ignoring alpha)
 void gDrawBitmapFast(Graphics* g, Bitmap* bmp, int16 dx, int16 dy) {
 

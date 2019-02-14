@@ -11,6 +11,10 @@
 #include "../../util/mathext.h"
 #include "../../core/resources.h"
 
+// Frame size
+static const int16 FRAME_WIDTH = 208;
+static const int16 FRAME_HEIGHT = 176;
+
 // Triangle angle
 static int16 angle;
 // Triangle radius
@@ -25,6 +29,10 @@ static ResourceList* res;
 // Bitmaps
 static Bitmap* bmpFont;
 static Bitmap* bmpPlayer;
+
+// Whether the frame has to be
+// refreshed
+static bool refreshFrame;
 
 
 // Draw a test triangle
@@ -44,6 +52,32 @@ static void drawTestTriangle(Graphics* g) {
     gDrawLine(g, trianglePos.x+A.x, trianglePos.y+A.y, trianglePos.x+B.x, trianglePos.y+B.y, 255);
     gDrawLine(g, trianglePos.x+C.x, trianglePos.y+C.y, trianglePos.x+B.x, trianglePos.y+B.y, 255);
     gDrawLine(g, trianglePos.x+A.x, trianglePos.y+A.y, trianglePos.x+C.x, trianglePos.y+C.y, 255);
+}
+
+
+// Draw frame (= the stuff around the viewport, really)
+static void drawFrame(Graphics* g) {
+
+    int16 fd = (200 - FRAME_HEIGHT)/2;
+
+    // Don't redrawn if not necessary
+    if(!refreshFrame) return;
+    refreshFrame = false;
+
+    gResetViewport(g);
+    gClearScreen(g, 0);
+
+    // Frame
+    gDrawRect(g, fd-1, fd-1, FRAME_WIDTH+2, FRAME_HEIGHT+2, 0);
+    gDrawRect(g, fd-2, fd-2, FRAME_WIDTH+4, FRAME_HEIGHT+4, 255);
+
+    // "Hello world!" & more text
+    gDrawTextFast(g, bmpFont, "Hello goat!",320-(320-FRAME_WIDTH-fd)/2, 16, true);
+
+    gDrawTextFast(g, bmpFont, "Life is\nawwwsom!",FRAME_WIDTH+fd*2, 32, false);
+
+    // Set viewport
+    gSetViewport(g, fd, fd, FRAME_WIDTH, FRAME_HEIGHT);
 }
 
 
@@ -74,6 +108,7 @@ static int16 gameInit() {
     angle = 0;
     trianglePos.x = 132;
     trianglePos.y = 100;
+    refreshFrame = true;
 
     return 0;
 }
@@ -128,17 +163,10 @@ static void gameUpdate(EventManager* evMan, int16 steps) {
 // Draw
 static void gameDraw(Graphics* g) {
 
-    gResetViewport(g);
-    gClearScreen(g, 0);
+    // Draw frame
+    drawFrame(g);
 
-    // "Hello world!" & more text
-    gDrawTextFast(g, bmpFont, "Hello goat!",320-(320-224-4)/2, 16, true);
-
-    gDrawTextFast(g, bmpFont, "Life is\nawwwsom!",224+8, 32, false);
-
-    // Set viewport
-    gSetViewport(g, 4, 4, 224, 192);
-    gClearView(g, 3);
+    gClearView(g, 111);
 
     // Draw test bitmap
     gDrawBitmap(g, bmpPlayer, 

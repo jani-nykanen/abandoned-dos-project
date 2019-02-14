@@ -51,6 +51,10 @@ void gDrawLine(Graphics* g, int16 x1, int16 y1,
 void gFillRect(Graphics* g, int16 x, int16 y, 
     int16 w, int16 h, uint8 col);
 
+// Draw a rectangle that is not filled
+void gDrawRect(Graphics* g, int16 x, int16 y, 
+    int16 w, int16 h, uint8 col);
+
 // Draw a bitmap fast (= ignoring alpha)
 void gDrawBitmapFast(Graphics* g, Bitmap* bmp, int16 x, int16 y);
 
