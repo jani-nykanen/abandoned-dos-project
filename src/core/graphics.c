@@ -145,6 +145,9 @@ Graphics* createGraphics() {
     g->frameDim.x = FB_WIDTH;
     g->frameDim.y = FB_HEIGHT;
     g->frameSize = g->frameDim.x*g->frameDim.y;
+    g->tr.x = 0;
+    g->tr.y = 0;
+
     // Clear to black
     gClearScreen(g, 0);
 
@@ -158,6 +161,7 @@ Graphics* createGraphics() {
     g->viewport.y = 0;
     g->viewport.w = FB_WIDTH;
     g->viewport.h = FB_HEIGHT;
+    
 
     return g;
 }
@@ -217,6 +221,13 @@ void gResetViewport(Graphics* g) {
     g->viewport.y = 0;
     g->viewport.w = FB_WIDTH;
     g->viewport.h = FB_HEIGHT;
+}
+
+
+// Translate
+void gTranslate(Graphics* g, int16 x, int16 y) {
+
+    g->tr = vec2(x, y);
 }
 
 
@@ -350,6 +361,10 @@ void gDrawBitmapRegionFast(Graphics* g, Bitmap* bmp,
 
     if(g == NULL || bmp == NULL) return;
 
+    // Translate
+    dx += g->tr.x;
+    dy += g->tr.y;
+
     // Clip
     if(!clip(g, &sx, &sy, &sw, &sh, &dx, &dy, false))
         return;
@@ -432,6 +447,10 @@ void gDrawBitmapRegion(Graphics* g, Bitmap* bmp,
     int16 dir = flip ? -1 : 1;
 
     if(g == NULL || bmp == NULL) return;
+
+    // Translate
+    dx += g->tr.x;
+    dy += g->tr.y;
 
     // Clip
     if(!clip(g, &sx, &sy, &sw, &sh, &dx, &dy, flip))

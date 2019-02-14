@@ -24,7 +24,7 @@ Sprite sprCreate(int16 w, int16 h);
 
 // Animate a sprite
 void sprAnimate(Sprite* s, int16 row, int16 start, int16 end, 
-    int16 speed, int16 step);
+    int16 speed, int16 steps);
 
 // Draw a sprite frame
 void sprDrawFrame(Sprite* s, Graphics* g, Bitmap* bmp, 

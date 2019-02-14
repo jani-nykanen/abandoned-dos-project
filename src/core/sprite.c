@@ -12,6 +12,9 @@ Sprite sprCreate(int16 w, int16 h) {
 
     s.width = w;
     s.height = h;
+    s.frame = 0;
+    s.count = 0;
+    s.row = 0;
 
     return s;
 }
@@ -19,7 +22,7 @@ Sprite sprCreate(int16 w, int16 h) {
 
 // Animate a sprite
 void sprAnimate(Sprite* s, int16 row, int16 start, int16 end, 
-    int16 speed, int16 step) {
+    int16 speed, int16 steps) {
 
     if(s == NULL) return;
 
@@ -50,7 +53,7 @@ void sprAnimate(Sprite* s, int16 row, int16 start, int16 end,
     }
 
     // Animate
-	++ s->count;
+	s->count += steps;
 	if(s->count > speed) {
 	
         if(start < end) {
@@ -86,5 +89,5 @@ void sprDrawFrame(Sprite* s,Graphics* g, Bitmap* bmp,
 void sprDraw(Sprite* s, Graphics* g, Bitmap* bmp, 
     int16 x, int16 y, bool flip) {
 
-    sprDrawFrame(s, g, bmp, s->frame, s->count, x, y, flip);
+    sprDrawFrame(s, g, bmp, s->frame, s->row, x, y, flip);
 }

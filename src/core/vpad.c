@@ -78,7 +78,7 @@ void vpadUpdate(Vpad* vpad, InputManager* input) {
     }
 
     // Make sure the values are within B(0,1)
-    if(vpad->stick.x > 0 &&
+    if(vpad->stick.x != 0 &&
        extAbs(vpad->stick.x) == extAbs(vpad->stick.y)) {
 
         vpad->stick.x = vpad->stick.x < 0 ? -91 : 91;

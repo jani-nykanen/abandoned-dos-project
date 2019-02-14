@@ -19,6 +19,8 @@ typedef struct {
 
     // Viewport size
     Rect viewport;
+    // Translation 
+    Vector2 tr;
 
 } Graphics;
 
@@ -42,6 +44,9 @@ void gSetViewport(Graphics* g, short x, short y,
     short w, short h);
 // Reset viewport
 void gResetViewport(Graphics* g);
+
+// Translate
+void gTranslate(Graphics* g, int16 x, int16 y);
 
 // Draw a line
 void gDrawLine(Graphics* g, int16 x1, int16 y1, 
