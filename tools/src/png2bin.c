@@ -18,8 +18,6 @@ int conv_bitmap(const char* in, const char* out, bool dither) {
     const int DIVISOR2 = 85;
 
     // Load surface
-    SDL_Init(SDL_INIT_EVERYTHING);
-    IMG_Init(IMG_INIT_PNG);
     SDL_Surface* surf = IMG_Load(in);
     if(surf == NULL) {
         
@@ -44,21 +42,26 @@ int conv_bitmap(const char* in, const char* out, bool dither) {
     Uint8 r,g,b,a;
     Uint8 er,eg,eb;
     Uint8* pdata = (Uint8*)surf->pixels;
+    Uint8 p = surf->format->BytesPerPixel;
+
     for(; i < pixelCount; i++) {
 
         row = i / surf->w;
         column = i % surf->w;
 
-        a = pdata[i*4 +3];
-        if(a < 255) {
-            
-            data[i] = ALPHA;
-            continue;
+        if(p == 4) {
+
+            a = pdata[i*4 +3];
+            if(a < 255) {
+                
+                data[i] = ALPHA;
+                continue;
+            }
         }
 
-        b = pdata[i*4 +2];
-        g = pdata[i*4 +1];
-        r = pdata[i*4 ];
+        b = pdata[i*p +2];
+        g = pdata[i*p +1];
+        r = pdata[i*p ];
 
         // No dithering
         if(!dither) {
@@ -111,8 +114,8 @@ int conv_bitmap(const char* in, const char* out, bool dither) {
     }
 
     // Save dimensions
-    short w = (unsigned short)surf->w;
-    short h = (unsigned short)surf->h;
+    unsigned short w = (unsigned short)surf->w;
+    unsigned short h = (unsigned short)surf->h;
 
     // Free surface
     free(surf);
@@ -126,8 +129,8 @@ int conv_bitmap(const char* in, const char* out, bool dither) {
     }
 
     // Save dimensions
-    fwrite(&w, sizeof(short), 1, f);
-    fwrite(&h, sizeof(short), 1, f);
+    fwrite(&w, sizeof(unsigned short), 1, f);
+    fwrite(&h, sizeof(unsigned short), 1, f);
 
     // Save pixel data
     fwrite(data,sizeof(Uint8), w*h, f);
