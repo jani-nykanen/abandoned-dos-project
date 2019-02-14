@@ -20,6 +20,9 @@
 #define FB_WIDTH 320
 #define FB_HEIGHT 200
 
+// Global alpha (TODO: Make not constant!)
+static const uint8 ALPHA = 170;
+
 // VGA position
 static const long VGA_POS = 0xA0000000;
 
@@ -62,7 +65,7 @@ static bool clipRect(Graphics* g, short* x, short* y,
 
 // Clip (general)
 static bool clip(Graphics* g, int16* sx, int16* sy, int16* sw, int16* sh, 
-    int16* dx, int16* dy) {
+    int16* dx, int16* dy, bool flip) {
 
     int16 ow, oh;
 
@@ -71,13 +74,17 @@ static bool clip(Graphics* g, int16* sx, int16* sy, int16* sw, int16* sh,
     if(*dx < g->viewport.x) {
 
         *sw -= g->viewport.x - (*dx);
-        *sx += ow-*sw;
+        if(!flip)
+            *sx += ow-*sw;
+
         *dx = g->viewport.x;
     }
     // Right
     if(*dx+*sw >= g->viewport.x+g->viewport.w) {
 
          *sw -= (*dx+*sw) - (g->viewport.x + g->viewport.w); 
+         if(flip)
+            *sx += ow-*sw;
     }
 
     // Top
@@ -300,10 +307,10 @@ void gDrawBitmapRegionFast(Graphics* g, Bitmap* bmp,
     if(g == NULL || bmp == NULL) return;
 
     // Clip
-    if(!clip(g, &sx, &sy, &sw, &sh, &dx, &dy))
+    if(!clip(g, &sx, &sy, &sw, &sh, &dx, &dy, false))
         return;
 
-    // Copy lines
+    // Copy horizontal lines
     offset = g->frameDim.x*dy + dx;
     boff = bmp->width*sy + sx;
     for(y = dy; y < dy+sh; ++ y) {
@@ -357,5 +364,54 @@ void gDrawTextFast(Graphics* g, Bitmap* font, const char* text,
             cw, ch, x, y);
 
         x += cw;
+    }
+}
+
+
+// Draw a bitmap
+void gDrawBitmap(Graphics* g, Bitmap* bmp, int16 x, int16 y,
+    bool flip) {
+
+    gDrawBitmapRegion(g, bmp, 0, 0, bmp->width, bmp->height, x, y, flip);
+}
+
+
+// Draw a bitmap region
+void gDrawBitmapRegion(Graphics* g, Bitmap* bmp, 
+    int16 sx, int16 sy, int16 sw, int16 sh, int16 dx, int16 dy,
+    bool flip) {
+
+    int16 x, y;
+    uint16 offset;
+    uint16 boff;
+    uint8 pixel;
+    int16 dir = flip ? -1 : 1;
+
+    if(g == NULL || bmp == NULL) return;
+
+    // Clip
+    if(!clip(g, &sx, &sy, &sw, &sh, &dx, &dy, flip))
+        return;
+
+    // Draw pixels
+    offset = g->frameDim.x*dy + dx;
+    boff = bmp->width*sy + sx + (flip ? (sw-1) : 0);
+    for(y = 0; y < sh; ++ y) {
+
+        for(x = 0; x < sw; ++ x) {
+
+            pixel = bmp->data[boff];
+            // Check if not alpha pixel
+            // (i.e not transparent)
+            if(pixel != ALPHA) {
+
+                g->frame[offset] = pixel;
+            }
+
+            boff += dir;
+            ++ offset;
+        }
+        boff += bmp->width-sw*dir;
+        offset += g->frameDim.x-sw;
     }
 }

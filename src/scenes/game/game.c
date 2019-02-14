@@ -24,6 +24,7 @@ static Vector2 trianglePos;
 static ResourceList* res;
 // Bitmaps
 static Bitmap* bmpFont;
+static Bitmap* bmpPlayer;
 
 
 // Draw a test triangle
@@ -58,7 +59,8 @@ static int16 gameInit() {
         return 1;
     }
     // Load resources
-    cond = rsAddBitmap(res, "ASSETS/BITMAPS/FONT.BIN", "font");
+    cond = rsAddBitmap(res, "ASSETS/BITMAPS/FONT.BIN", "font")
+        && rsAddBitmap(res, "ASSETS/BITMAPS/PLAYER.BIN", "player");
     if(!cond) {
 
         return 1;
@@ -66,6 +68,7 @@ static int16 gameInit() {
 
     // Get bitmaps
     bmpFont = (Bitmap*)rsGetResource(res, "font");
+    bmpPlayer = (Bitmap*)rsGetResource(res, "player");
 
     // Set defaults
     angle = 0;
@@ -138,9 +141,9 @@ static void gameDraw(Graphics* g) {
     gClearView(g, 3);
 
     // Draw test bitmap
-    gDrawBitmapRegionFast(g, bmpFont, 32,0, 64,64, 
+    gDrawBitmap(g, bmpPlayer, 
         trianglePos.x-32,
-        trianglePos.y-32);
+        trianglePos.y-24, true);
 
     // Draw a test triangle
     drawTestTriangle(g);

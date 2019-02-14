@@ -62,4 +62,13 @@ void gDrawBitmapRegionFast(Graphics* g, Bitmap* bmp,
 void gDrawTextFast(Graphics* g, Bitmap* font, const char* text, 
     int16 x, int16 y, bool center);
 
+// Draw a bitmap
+void gDrawBitmap(Graphics* g, Bitmap* bmp, int16 x, int16 y,
+    bool flip);    
+
+// Draw a bitmap region
+void gDrawBitmapRegion(Graphics* g, Bitmap* bmp, 
+    int16 sx, int16 sy, int16 sw, int16 sh, int16 dx, int16 dy,
+    bool flip);    
+
 #endif // __GRAPHICS_H__
