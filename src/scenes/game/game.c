@@ -12,6 +12,7 @@
 
 #include "../../util/mathext.h"
 #include "../../core/resources.h"
+#include "../../core/tilemap.h"
 
 // Frame size
 static const int16 FRAME_WIDTH = 208;
@@ -66,6 +67,7 @@ static void drawFrame(Graphics* g) {
 static int16 gameInit() {
 
     bool cond;
+    Tilemap* test;
 
     // Create an empty resource list
     res = createEmptyResourceList();
@@ -75,8 +77,16 @@ static int16 gameInit() {
     }
     // Load resources
     cond = rsAddBitmap(res, "ASSETS/BITMAPS/FONT.BIN", "font")
-        && rsAddBitmap(res, "ASSETS/BITMAPS/PLAYER.BIN", "player");
+        && rsAddBitmap(res, "ASSETS/BITMAPS/PLAYER.BIN", "player")
+        && rsAddBitmap(res, "ASSETS/BITMAPS/TILESET.BIN", "tileset");
     if(!cond) {
+
+        return 1;
+    }
+
+    // Load a test tilemap
+    test = loadTilemap("ASSETS/MAPS/1.BIN");
+    if(test == NULL) {
 
         return 1;
     }
