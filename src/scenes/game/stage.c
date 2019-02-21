@@ -75,8 +75,8 @@ void stageDraw(Stage* s, Graphics* g) {
 
         for(x = 0; x < s->tmap->width; ++ x) {
 
-            if(s->updateBuffer[y*s->tmap->width+ x] == true)
-                return;
+            if(s->updateBuffer[y*s->tmap->width+ x])
+                continue;
 
             // Update update buffer
             s->updateBuffer[y*s->tmap->width+ x] = true;
@@ -99,6 +99,47 @@ void stageDraw(Stage* s, Graphics* g) {
     }
 }
 
+
+// Refresh neighborhood to determine redrawable
+// tiles
+void stageRefreshNeighborhood(Stage* s, 
+    GameObject* obj, int16 w, int16 h) {
+
+    int16 x, y;
+    int16 sx, sy;
+    int16 ex, ey;
+    int16 dx = s->tmap->width*16 / 2;
+
+    // Start position
+    // TODO: Pass center point?
+    sx = (dx + obj->pos.x/FIXED_PREC) / 16 - w;
+    if(sx < 0) sx = 0;
+    sy = (obj->pos.y/FIXED_PREC -8) / 16 - h;
+    if(sy < 0) sy = 0;
+
+    // Out of range
+    if(sx >= s->tmap->width || sy >= s->tmap->height)
+        return;
+
+    // End position
+    ex = sx + w*2;
+    ey = sy + h*2;
+
+    for(y = sy; y <= ey; ++ y) {
+
+        for(x = sx; x <= ex; ++ x) {
+
+            if(x >= s->tmap->width)
+                break;
+
+            s->updateBuffer[y*s->tmap->width + x] = false;
+        }
+
+        if(y >= s->tmap->height)
+            break;
+    }
+
+}
 
 // Destroy stage
 void destroyStage(Stage* s) {

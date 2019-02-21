@@ -33,6 +33,18 @@ void objmanUpdate(ObjectManager* objm, EventManager* evMan,
 }
 
 
+// Update stage-related things
+// (=set drawable tiles)
+void objmanUpdateStage(ObjectManager* objm, Stage* s) {
+
+    const int16 PL_RADIUS = 1;
+
+    // Refresh player neighborhood
+    stageRefreshNeighborhood(s, (GameObject*)&objm->player,
+        PL_RADIUS, PL_RADIUS);
+}
+
+
 // Draw objects
 void objmanDraw(ObjectManager* objm, Graphics* g) {
 

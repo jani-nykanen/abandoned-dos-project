@@ -6,6 +6,10 @@
 
 #include "../../core/scene.h"
 
+// Viewport size
+#define VIEW_WIDTH 304
+#define VIEW_HEIGHT 160
+
 // Get game scene
 Scene getGameScene();
 

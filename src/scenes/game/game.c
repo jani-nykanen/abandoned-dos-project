@@ -117,6 +117,8 @@ static void gameUpdate(EventManager* evMan, int16 steps) {
 
     // Update objects
     objmanUpdate(&objm, evMan, steps);
+    // Update stage related stuff
+    objmanUpdateStage(&objm, stage);
 
     // Escape (TEMP!)
     if(vpad->buttons[4].state == Pressed) {
@@ -134,6 +136,9 @@ static void gameDraw(Graphics* g) {
 
     // Clear background
     // gClearScreen(g, 111);
+
+    // Set viewport
+    gSetViewport(g, 8, 8, VIEW_WIDTH, VIEW_HEIGHT);
 
     // Draw stage
     gTranslate(g, 8, 8);

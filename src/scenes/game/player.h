@@ -9,18 +9,16 @@
 #include "../../core/eventman.h"
 #include "../../core/resources.h"
 
+#include "gameobject.h"
+
 // Initialize global player content
 void plInit(ResourceList* res);
 
 // Player type
 typedef struct {
 
-    // Sceen position
-    Vector2 pos;
-    // Speed
-    Vector2 speed;
-    // Target speed
-    Vector2 target;
+    IMPLEMENT_GAME_OBJECT
+
     // Direction
     int16 dir;
 
