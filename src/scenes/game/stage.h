@@ -7,6 +7,8 @@
 #include "../../core/tilemap.h"
 #include "../../core/graphics.h"
 
+#include <stdbool.h>
+
 // Stage type
 typedef struct {
 
@@ -14,6 +16,8 @@ typedef struct {
     Tilemap* tmap;
     // Tileset
     Bitmap* bmpTileset;
+    // Update buffer
+    bool* updateBuffer;
 
     // Stage index
     uint8 index;

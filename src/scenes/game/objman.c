@@ -18,7 +18,7 @@ ObjectManager objmanCreate() {
     ObjectManager objm;
 
     // Create components
-    objm.player = plCreate(104, 88);
+    objm.player = plCreate(0, 88);
 
     return objm;
 }
@@ -35,6 +35,11 @@ void objmanUpdate(ObjectManager* objm, EventManager* evMan,
 
 // Draw objects
 void objmanDraw(ObjectManager* objm, Graphics* g) {
+
+
+    // Translate, so we don't run out of pixels
+    // (with precision 128 we cannot go too high)
+    gMove(g, 304/2, 0);
 
     // Draw player
     plDraw(&objm->player, g);

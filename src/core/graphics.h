@@ -47,6 +47,8 @@ void gResetViewport(Graphics* g);
 
 // Translate
 void gTranslate(Graphics* g, int16 x, int16 y);
+// "Additive translation"
+void gMove(Graphics* g, int16 x, int16 y);
 
 // Draw a line
 void gDrawLine(Graphics* g, int16 x1, int16 y1, 

@@ -14,6 +14,7 @@
 Stage* createStage(uint8 index, Bitmap* bmpTileset) {
 
     //char path[PATH_LEN];
+    uint8 i;
 
     // Allocate memory
     Stage* s = (Stage*)malloc(sizeof(Stage));
@@ -30,6 +31,22 @@ Stage* createStage(uint8 index, Bitmap* bmpTileset) {
 
         free(s);
         return NULL;
+    }
+
+    // Allocate memory for the update buffer
+    s->updateBuffer = (bool*)malloc(sizeof(bool) 
+        * s->tmap->width * s->tmap->height);
+    if(s->updateBuffer == NULL) {
+
+        printf("Memory allocation error!\n");
+        destroyTilemap(s->tmap);
+        free(s);
+        return NULL;
+    }
+    // Set defaults
+    for(i = 0; i < s->tmap->width*s->tmap->height; ++ i) {
+
+        s->updateBuffer[i] = false;
     }
 
     // Store bitmap
@@ -58,9 +75,18 @@ void stageDraw(Stage* s, Graphics* g) {
 
         for(x = 0; x < s->tmap->width; ++ x) {
 
+            if(s->updateBuffer[y*s->tmap->width+ x] == true)
+                return;
+
+            // Update update buffer
+            s->updateBuffer[y*s->tmap->width+ x] = true;
+            // Check if we want to draw a tile or background
             t = mapGetTile(s->tmap, 0, x, y);
-            if(t == 0)
+            if(t == 0) {
+
+                gFillRect(g, x*16, y*16, 16, 16, 219);
                 continue;
+            }
             -- t;
 
             // Draw tile

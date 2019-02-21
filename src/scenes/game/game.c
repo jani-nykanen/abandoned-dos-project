@@ -133,9 +133,10 @@ static void gameDraw(Graphics* g) {
     gResetViewport(g);
 
     // Clear background
-    gClearScreen(g, 111);
+    // gClearScreen(g, 111);
 
     // Draw stage
+    gTranslate(g, 8, 8);
     stageDraw(stage, g);
 
     // Draw objects

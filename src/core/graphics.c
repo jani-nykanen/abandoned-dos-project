@@ -231,6 +231,14 @@ void gTranslate(Graphics* g, int16 x, int16 y) {
 }
 
 
+// "Additive translation"
+void gMove(Graphics* g, int16 x, int16 y) {
+
+    g->tr.x += x;
+    g->tr.y += y;
+}
+
+
 // Draw a line
 void gDrawLine(Graphics* g, int16 x1, int16 y1, 
     int16 x2, int16 y2, uint8 color) {
@@ -283,6 +291,9 @@ void gFillRect(Graphics* g, int16 dx, int16 dy,
 
     int16 y;
     uint16 offset;
+
+    dx += g->tr.x;
+    dy += g->tr.y;
 
     // Clip
     if(!clipRect(g, &dx, &dy, &w, &h))
