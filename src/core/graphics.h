@@ -15,7 +15,7 @@ typedef struct {
 
     // Framebuffer size
     Vector2 frameDim;
-    short frameSize; // Size in bytes
+    uint16 frameSize; // Size in bytes
 
     // Viewport size
     Rect viewport;

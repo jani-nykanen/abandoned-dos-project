@@ -4,6 +4,7 @@
 #include "game.h"
 
 #include "objman.h"
+#include "stage.h"
 
 #include <string.h>
 #include <stdio.h>
@@ -26,6 +27,8 @@ static Bitmap* bmpPlayer;
 
 // Object manager
 static ObjectManager objm;
+// Stage
+static Stage* stage;
 
 // Whether the frame has to be
 // refreshed
@@ -67,7 +70,6 @@ static void drawFrame(Graphics* g) {
 static int16 gameInit() {
 
     bool cond;
-    Tilemap* test;
 
     // Create an empty resource list
     res = createEmptyResourceList();
@@ -84,9 +86,9 @@ static int16 gameInit() {
         return 1;
     }
 
-    // Load a test tilemap
-    test = loadTilemap("ASSETS/MAPS/1.BIN");
-    if(test == NULL) {
+    // Create stage
+    stage = createStage(1, (Bitmap*)rsGetResource(res, "tileset"));
+    if(stage == NULL) {
 
         return 1;
     }
@@ -127,10 +129,14 @@ static void gameUpdate(EventManager* evMan, int16 steps) {
 // Draw
 static void gameDraw(Graphics* g) {
 
-    // Draw frame
-    drawFrame(g);
+    gTranslate(g, 0, 0);
+    gResetViewport(g);
+
     // Clear background
-    gClearView(g, 111);
+    gClearScreen(g, 111);
+
+    // Draw stage
+    stageDraw(stage, g);
 
     // Draw objects
     objmanDraw(&objm, g);
