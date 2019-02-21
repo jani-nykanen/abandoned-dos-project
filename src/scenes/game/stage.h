@@ -24,6 +24,11 @@ typedef struct {
     // Stage index
     uint8 index;
 
+    // Water position
+    int16 waterPos;
+    // Wave "timer"
+    int16 waveTimer;
+
 } Stage;
 
 // Create stage. Returns a pointer

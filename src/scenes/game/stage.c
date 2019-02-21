@@ -3,10 +3,41 @@
 
 #include "stage.h"
 
+#include "../../util/mathext.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 
 #define PATH_LEN 16
+
+
+// Draw water tile
+static void stageDrawWater(Stage* s, Graphics* g, int16 x, int16 y) {
+
+    const int16 AMPLITUDE = 2;
+
+    int16 sx1 = s->waterPos / FIXED_PREC;
+    int16 sw1 = 16-sx1;
+    int16 sx2 = 0;
+    int16 sw2 = 16-sw1;
+    int16 sy = AMPLITUDE-(fixedSin(s->waveTimer) * AMPLITUDE) / FIXED_PREC;
+    int16 sh = 16-sy;
+
+    // Fill remaining area
+    if(sy > 0) {
+
+        gFillRect(g, x, y, 16, 16-sy, 219);
+    }
+
+    // "Left"
+    gDrawBitmapRegionFast(g, s->bmpTileset, 
+        7*16 + sx1, 0, sw1, sh, x, y+sy);
+    // "Right" aka remainder
+    gDrawBitmapRegionFast(g, s->bmpTileset, 
+        7*16 + sx2, 0, sw2, sh, x + sw1, y+sy);
+}
+
+
 
 // Create stage. Returns a pointer
 // so that tilemap does not get
@@ -43,7 +74,7 @@ Stage* createStage(uint8 index, Bitmap* bmpTileset) {
         free(s);
         return NULL;
     }
-    // Set defaults
+    // Set to false
     for(i = 0; i < s->tmap->width*s->tmap->height; ++ i) {
 
         s->updateBuffer[i] = false;
@@ -52,6 +83,10 @@ Stage* createStage(uint8 index, Bitmap* bmpTileset) {
     // Store bitmap
     s->bmpTileset = bmpTileset;
 
+    // Set defaults
+    s->waterPos = 0;
+    s->waveTimer = 0;
+
     return s;
 }
 
@@ -59,12 +94,25 @@ Stage* createStage(uint8 index, Bitmap* bmpTileset) {
 // Update stage
 void stageUpdate(Stage* s, int16 steps) {
 
-    // ...
+    const int16 WATER_SPEED = 16;
+    const int16 WAVE_SPEED = 3;
+
+    // Update water
+    s->waterPos += WATER_SPEED* steps;
+    if(s->waterPos >= 16*FIXED_PREC)
+        s->waterPos -= 16*FIXED_PREC;
+
+    // Update waves
+    s->waveTimer += WAVE_SPEED * steps;
+    if(s->waveTimer >= 360)
+        s->waveTimer -= 360;
 }
 
 
 // Draw stage
 void stageDraw(Stage* s, Graphics* g) {
+
+    const int16 WATER_TILE = 8;
 
     int16 x, y;
     int16 sx, sy;
@@ -75,13 +123,22 @@ void stageDraw(Stage* s, Graphics* g) {
 
         for(x = 0; x < s->tmap->width; ++ x) {
 
+            // Get tile
+            t = mapGetTile(s->tmap, 0, x, y);
+
+            // If water, use own routine
+            if(t == WATER_TILE) {
+
+                stageDrawWater(s, g, x*16, y*16);
+                continue;
+            }
+
             if(s->updateBuffer[y*s->tmap->width+ x])
                 continue;
 
             // Update update buffer
             s->updateBuffer[y*s->tmap->width+ x] = true;
             // Check if we want to draw a tile or background
-            t = mapGetTile(s->tmap, 0, x, y);
             if(t == 0) {
 
                 gFillRect(g, x*16, y*16, 16, 16, 219);

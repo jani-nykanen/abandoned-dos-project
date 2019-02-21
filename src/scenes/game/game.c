@@ -15,10 +15,6 @@
 #include "../../core/resources.h"
 #include "../../core/tilemap.h"
 
-// Frame size
-static const int16 FRAME_WIDTH = 208;
-static const int16 FRAME_HEIGHT = 176;
-
 // Game resources
 static ResourceList* res;
 // Bitmaps
@@ -36,9 +32,10 @@ static bool refreshFrame;
 
 
 // Draw frame (= the stuff around the viewport, really)
-static void drawFrame(Graphics* g) {
+static void gameDrawFrame(Graphics* g) {
 
-    int16 fd = (200 - FRAME_HEIGHT)/2;
+    int16 x = 160 - VIEW_WIDTH/2;
+    int16 y = 8;
 
     // Don't redrawn if not necessary
     if(!refreshFrame) return;
@@ -52,17 +49,8 @@ static void drawFrame(Graphics* g) {
     gClearScreen(g, 0);
 
     // Frame
-    gDrawRect(g, fd-1, fd-1, FRAME_WIDTH+2, FRAME_HEIGHT+2, 0);
-    gDrawRect(g, fd-2, fd-2, FRAME_WIDTH+4, FRAME_HEIGHT+4, 255);
-
-    // "Hello world!" & more text
-    gDrawTextFast(g, bmpFont, "Hello goat!",320-(320-FRAME_WIDTH-fd)/2, 16, true);
-
-    gDrawTextFast(g, bmpFont, "Life is\nawwwsom!",FRAME_WIDTH+fd*2, 32, false);
-
-    // Set viewport
-    gSetViewport(g, fd, fd, FRAME_WIDTH, FRAME_HEIGHT);
-    gTranslate(g, fd, fd);
+    gDrawRect(g, x-1, y-1, VIEW_WIDTH+2, VIEW_HEIGHT+2, 0);
+    gDrawRect(g, x-2, y-2, VIEW_WIDTH+4, VIEW_HEIGHT+4, 255);
 }
 
 
@@ -115,6 +103,9 @@ static void gameUpdate(EventManager* evMan, int16 steps) {
 
     Vpad* vpad = evMan->vpad;
 
+    // Update stage
+    stageUpdate(stage, steps);
+
     // Update objects
     objmanUpdate(&objm, evMan, steps);
     // Update stage related stuff
@@ -131,11 +122,11 @@ static void gameUpdate(EventManager* evMan, int16 steps) {
 // Draw
 static void gameDraw(Graphics* g) {
 
+    // Reset view
     gTranslate(g, 0, 0);
     gResetViewport(g);
-
-    // Clear background
-    // gClearScreen(g, 111);
+    // Draw frame
+    gameDrawFrame(g);
 
     // Set viewport
     gSetViewport(g, 8, 8, VIEW_WIDTH, VIEW_HEIGHT);
