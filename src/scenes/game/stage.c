@@ -118,6 +118,9 @@ void stageDraw(Stage* s, Graphics* g) {
     int16 sx, sy;
     uint8 t;
 
+    // Disable clipping for waster rendering
+    gToggleClipping(g, false);
+
     // Draw tiles
     for(y = 0; y < s->tmap->height; ++ y) {
 
@@ -154,6 +157,9 @@ void stageDraw(Stage* s, Graphics* g) {
             gDrawBitmapRegionFast(g, s->bmpTileset, sx, sy, 16, 16, x*16, y*16);
         }
     }
+
+    // Reset clipping
+    gToggleClipping(g, true);
 }
 
 

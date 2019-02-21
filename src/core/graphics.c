@@ -162,6 +162,8 @@ Graphics* createGraphics() {
     g->viewport.w = FB_WIDTH;
     g->viewport.h = FB_HEIGHT;
     
+    // Set other default values
+    g->clipping = true;
 
     return g;
 }
@@ -221,6 +223,13 @@ void gResetViewport(Graphics* g) {
     g->viewport.y = 0;
     g->viewport.w = FB_WIDTH;
     g->viewport.h = FB_HEIGHT;
+}
+
+
+// Toggle clipping
+void gToggleClipping(Graphics* g, bool state) {
+
+    g->clipping = state;
 }
 
 
@@ -296,7 +305,7 @@ void gFillRect(Graphics* g, int16 dx, int16 dy,
     dy += g->tr.y;
 
     // Clip
-    if(!clipRect(g, &dx, &dy, &w, &h))
+    if(g->clipping && !clipRect(g, &dx, &dy, &w, &h))
         return;
 
     // Draw
@@ -321,7 +330,7 @@ void gDrawRect(Graphics* g, int16 dx, int16 dy,
     int16 y;
 
     // Clip
-    if(!clipRect(g, &dx, &dy, &w, &h))
+    if(g->clipping && !clipRect(g, &dx, &dy, &w, &h))
         return;
 
     // Top line
@@ -377,7 +386,7 @@ void gDrawBitmapRegionFast(Graphics* g, Bitmap* bmp,
     dy += g->tr.y;
 
     // Clip
-    if(!clip(g, &sx, &sy, &sw, &sh, &dx, &dy, false))
+    if(g->clipping && !clip(g, &sx, &sy, &sw, &sh, &dx, &dy, false))
         return;
 
     // Copy horizontal lines
@@ -464,7 +473,7 @@ void gDrawBitmapRegion(Graphics* g, Bitmap* bmp,
     dy += g->tr.y;
 
     // Clip
-    if(!clip(g, &sx, &sy, &sw, &sh, &dx, &dy, flip))
+    if(g->clipping && !clip(g, &sx, &sy, &sw, &sh, &dx, &dy, flip))
         return;
 
     // Draw pixels

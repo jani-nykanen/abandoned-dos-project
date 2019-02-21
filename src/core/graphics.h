@@ -19,6 +19,8 @@ typedef struct {
 
     // Viewport size
     Rect viewport;
+    // Is clipping enabled
+    bool clipping;
     // Translation 
     Vector2 tr;
 
@@ -44,6 +46,9 @@ void gSetViewport(Graphics* g, short x, short y,
     short w, short h);
 // Reset viewport
 void gResetViewport(Graphics* g);
+
+// Toggle clipping
+void gToggleClipping(Graphics* g, bool state);
 
 // Translate
 void gTranslate(Graphics* g, int16 x, int16 y);
