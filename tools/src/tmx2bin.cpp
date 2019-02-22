@@ -6,6 +6,8 @@
 
 #include <vector>
 #include <string>
+#include <iostream>
+
 
 typedef std::vector<int> Layer;
 
@@ -284,7 +286,7 @@ void Tilemap::convertToBin(const char* out) {
     unsigned char layerCount = (unsigned char)layers.size();
     fwrite(&layerCount, sizeof(char), 1, f);
 
-    // Data
+    // Copy data and store it
     std::vector<unsigned char> data;
     for(int i = 0; i < (int)layers.size(); ++ i) {
 
@@ -293,9 +295,9 @@ void Tilemap::convertToBin(const char* out) {
 
             data.push_back((unsigned char)layers[i][j]);
         }
-        // Store
-        fwrite(&data[0], sizeof(char), width*height, f);
     }
+    // Store
+    fwrite(&data[0], sizeof(char), width*height*layerCount, f);
 
     fclose(f);
 }

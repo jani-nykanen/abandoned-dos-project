@@ -25,23 +25,21 @@ ObjectManager objmanCreate() {
 
 
 // Update objects
-void objmanUpdate(ObjectManager* objm, EventManager* evMan, 
+void objmanUpdate(ObjectManager* objm, EventManager* evMan, Stage* s,
     int16 steps) {
+
+    const int16 PL_RADIUS = 1;
 
     // Update player
     plUpdate(&objm->player, evMan, steps);
-}
 
-
-// Update stage-related things
-// (=set drawable tiles)
-void objmanUpdateStage(ObjectManager* objm, Stage* s) {
-
-    const int16 PL_RADIUS = 1;
+    // Update collisions
+    stageCollision(s, (GameObject*)&objm->player, steps);
 
     // Refresh player neighborhood
     stageRefreshNeighborhood(s, (GameObject*)&objm->player,
         PL_RADIUS, PL_RADIUS);
+
 }
 
 

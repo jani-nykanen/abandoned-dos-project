@@ -47,6 +47,9 @@ void stageDraw(Stage* s, Graphics* g);
 void stageRefreshNeighborhood(Stage* s, 
     GameObject* obj, int16 w, int16 h);
 
+// Object collision
+void stageCollision(Stage* s, GameObject* gobj, int16 steps);
+
 // Destroy stage
 void destroyStage(Stage* s);
 

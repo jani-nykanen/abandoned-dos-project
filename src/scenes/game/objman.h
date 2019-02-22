@@ -22,11 +22,9 @@ typedef struct {
 ObjectManager objmanCreate();
 
 // Update objects
-void objmanUpdate(ObjectManager* objm, EventManager* evMan, int16 steps);
-
-// Update stage-related things
-// (=set drawable tiles)
-void objmanUpdateStage(ObjectManager* objm, Stage* s);
+void objmanUpdate(ObjectManager* objm, 
+    EventManager* evMan, Stage* stage,
+    int16 steps);
 
 // Draw objects
 void objmanDraw(ObjectManager* objm, Graphics* g);

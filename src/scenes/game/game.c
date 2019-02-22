@@ -46,11 +46,12 @@ static void gameDrawFrame(Graphics* g) {
     gTranslate(g, 0, 0);
 
     // Clear to black
-    gClearScreen(g, 0);
+    gClearScreen(g, 47);
 
     // Frame
     gDrawRect(g, x-1, y-1, VIEW_WIDTH+2, VIEW_HEIGHT+2, 0);
     gDrawRect(g, x-2, y-2, VIEW_WIDTH+4, VIEW_HEIGHT+4, 255);
+    gDrawRect(g, x-3, y-3, VIEW_WIDTH+6, VIEW_HEIGHT+6, 119);
 }
 
 
@@ -107,10 +108,8 @@ static void gameUpdate(EventManager* evMan, int16 steps) {
     stageUpdate(stage, steps);
 
     // Update objects
-    objmanUpdate(&objm, evMan, steps);
-    // Update stage related stuff
-    objmanUpdateStage(&objm, stage);
-
+    objmanUpdate(&objm, evMan, stage, steps);
+    
     // Escape (TEMP!)
     if(vpad->buttons[4].state == Pressed) {
 

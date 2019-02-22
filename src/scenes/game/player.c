@@ -69,7 +69,7 @@ static void plAnimate(Player* pl, int16 steps) {
     // Moving
     if(pl->speed.x != 0 || pl->speed.y != 0) {
 
-        sprAnimate(&pl->spr, dir, 0, 3, 8, steps);
+        sprAnimate(&pl->spr, dir, 0, 3, 7, steps);
     }
     // Standing
     else {
@@ -92,6 +92,11 @@ Player plCreate(int16 x, int16 y) {
     pl.speed.y = 0;
     pl.target = pl.speed;
     pl.dir = 0;
+    pl.canJump = false;
+    
+    // Collision box
+    pl.width = 8;
+    pl.height = 12;
 
     // Create sprite
     pl.spr = sprCreate(16, 16);
@@ -109,6 +114,8 @@ void plUpdate(Player* pl, EventManager* evMan, int16 steps) {
     plMove(pl, steps);
     // Animate
     plAnimate(pl, steps);
+
+    pl->canJump = false;
 }
 
 
@@ -121,3 +128,4 @@ void plDraw(Player* pl, Graphics* g) {
         pl->dir == 3
         );
 }
+

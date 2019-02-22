@@ -21,7 +21,6 @@ typedef struct {
 
     // Direction
     int16 dir;
-
     // Sprite
     Sprite spr;
 

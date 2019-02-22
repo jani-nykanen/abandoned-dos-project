@@ -112,6 +112,7 @@ void stageUpdate(Stage* s, int16 steps) {
 // Draw stage
 void stageDraw(Stage* s, Graphics* g) {
 
+    // TODO: Check from the collision?
     const int16 WATER_TILE = 8;
 
     int16 x, y;
@@ -203,6 +204,76 @@ void stageRefreshNeighborhood(Stage* s,
     }
 
 }
+
+
+// Object collision
+void stageCollision(Stage* s, GameObject* obj, int16 steps) {
+
+    const int16 RADIUS = 2;
+    
+    int16 x, y;
+    int16 sx, sy;
+    int16 ex, ey;
+    int16 dx = s->tmap->width*16 / 2;
+    uint8 colID;
+
+    // Start position
+    // TODO: Pass center point?
+    sx = (dx + obj->pos.x/FIXED_PREC) / 16 - RADIUS;
+    if(sx < 0) sx = 0;
+    sy = (obj->pos.y/FIXED_PREC -8) / 16 - RADIUS;
+    if(sy < 0) sy = 0;
+
+    // Out of range
+    if(sx >= s->tmap->width || sy >= s->tmap->height)
+        return;
+
+    // End position
+    ex = sx + RADIUS*2;
+    ey = sy + RADIUS*2;
+
+    // Go through tiles
+    for(y = sy; y <= ey; ++ y) {
+
+        for(x = sx; x <= ex; ++ x) {
+
+            if(x >= s->tmap->width)
+                break;
+
+            // Get collision tile
+            colID = mapGetTile(s->tmap, 1, x, y);
+            if(colID == 0)
+                continue;
+            colID -= 128;
+
+            // Check collisions
+            // TODO: Check tiles from a list etc?
+            // 1) Floor
+            if(colID == 1 || colID == 5 || colID == 7 || colID == 8 ||
+               colID == 11 || colID == 12 || colID == 14 || colID == 15 ) {
+
+                gobjFloorCollision(obj, x*16-dx, y*16, 16, steps);
+            }
+            // 2) Wall, right
+            if(colID == 4 || colID == 6 || colID == 7 || colID == 10 ||
+               colID == 11 || colID == 13 || colID == 14 || colID == 15 ) {
+
+                gobjWallCollision(obj, x*16-dx, y*16, 16, 1, steps);
+            }
+            // 3) Wall, left
+            if(colID == 2 || colID == 6 || colID == 8 || colID == 9 ||
+               colID == 11 || colID == 12 || colID == 13 || colID == 15 ) {
+
+                gobjWallCollision(obj, (x+1)*16-dx, y*16, 16, -1, steps);
+            }
+
+        }
+
+        if(y >= s->tmap->height)
+            break;
+    }
+}
+
 
 // Destroy stage
 void destroyStage(Stage* s) {
