@@ -74,3 +74,37 @@ bool gobjWallCollision(GameObject* gobj,
 
     return false;
 }
+
+
+// Ceiling collision
+bool gobjCeilingCollision(GameObject* gobj, 
+    int16 x, int16 y, int16 w, int16 steps) {
+
+    const int EPS1 = 1;
+    const int EPS2 = 2;
+
+    int16 px, py, sy;
+
+    if(gobj->speed.y > 0) 
+        return false;
+
+    py = gobj->pos.y/FIXED_PREC;
+    px = gobj->pos.x/FIXED_PREC;
+    sy = gobj->speed.y/FIXED_PREC;
+
+    // Check if horizontally inside the collision area
+    if(px+(gobj->width/2) >= x && px-(gobj->width/2) < x+w) {
+
+        // Check if vertically inside
+        if(py-gobj->height <= y+EPS1 
+         && py-gobj->height >= y+(-EPS2+sy)*steps) {
+
+            gobj->pos.y = (y+gobj->height) * FIXED_PREC;
+            gobj->speed.y = 0;
+
+            return true;
+        }
+    }
+    
+    return false;
+}

@@ -33,4 +33,8 @@ bool gobjWallCollision(GameObject* gobj,
     int16 x, int16 y, int16 h, int16 dir, 
     int16 steps);
 
+// Ceiling collision
+bool gobjCeilingCollision(GameObject* gobj, 
+    int16 x, int16 y, int16 w, int16 steps);
+
 #endif // __GAMEOBJECT__

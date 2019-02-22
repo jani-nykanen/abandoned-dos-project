@@ -266,6 +266,12 @@ void stageCollision(Stage* s, GameObject* obj, int16 steps) {
 
                 gobjWallCollision(obj, (x+1)*16-dx, y*16, 16, -1, steps);
             }
+            // 4) Ceiling
+            if(colID == 3 || colID == 5 || colID == 9 || colID == 10 ||
+               colID == 12 || colID == 13 || colID == 14 || colID == 15 ) {
+
+                gobjCeilingCollision(obj, x*16-dx, (y+1)*16, 16, steps);
+            }
 
         }
 
