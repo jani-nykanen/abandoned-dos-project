@@ -8,6 +8,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "objman.h"
+
 #define PATH_LEN 16
 
 
@@ -278,6 +280,41 @@ void stageCollision(Stage* s, GameObject* obj, int16 steps) {
         if(y >= s->tmap->height)
             break;
     }
+}
+
+
+// Parse objects
+void stageParseObjects(Stage* s, void* p) {
+
+    int16 x, y;
+    int16 tileID;
+    int16 dx = s->tmap->width*16 / 2;
+
+    ObjectManager* oman = (ObjectManager*)p;
+
+    for(y = 0; y < s->tmap->height; ++ y) {
+
+        for(x = 0; x < s->tmap->width; ++ x) {
+
+            tileID = mapGetTile(s->tmap, 2, x, y);
+            if(tileID == 0)
+                continue;
+            tileID -= 161;
+
+            switch (tileID)
+            {
+                // Player
+                case 0:
+                    oman->player.pos.x = ((x+1)*16-dx) * FIXED_PREC;
+                    oman->player.pos.y = (y+1)*16 * FIXED_PREC;
+                    break;
+            
+                default:
+                    break;
+            }
+        }
+    }
+
 }
 
 

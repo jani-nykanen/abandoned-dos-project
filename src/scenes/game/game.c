@@ -88,9 +88,8 @@ static int16 gameInit() {
 
     // Initialize global content
     objmanInit(res);
-
     // Create components
-    objm = objmanCreate();
+    objm = objmanCreate(stage);
 
     // Set defaults
     refreshFrame = true;

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.1" orientation="orthogonal" renderorder="right-down" width="19" height="10" tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#dadaff" nextlayerid="3" nextobjectid="1">
+<map version="1.0" tiledversion="1.1.5" orientation="orthogonal" renderorder="right-down" width="19" height="10" tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#dadaff" nextobjectid="1">
  <tileset firstgid="1" source="tileset.tsx"/>
  <tileset firstgid="129" source="collider_tiles.tsx"/>
- <layer id="1" name="base" width="19" height="10">
+ <layer name="base" width="19" height="10">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,59,0,0,0,0,0,0,57,58,0,0,0,0,57,58,0,
@@ -16,7 +16,7 @@
 26,1,1,8,8,1,1,1,8,1,1,1,1,1,1,1,1,2,3
 </data>
  </layer>
- <layer id="2" name="collision" width="19" height="10" opacity="0.67">
+ <layer name="collision" width="19" height="10" opacity="0.67">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -28,6 +28,20 @@
 129,136,0,0,0,132,0,130,0,0,135,129,129,129,129,0,0,0,0,
 0,0,136,0,0,132,0,130,0,135,0,0,0,0,0,0,0,0,0,
 0,0,130,145,145,132,0,130,145,132,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <layer name="objects" width="19" height="10">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,162,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,162,0,0,0,
+0,0,162,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+161,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
 </map>

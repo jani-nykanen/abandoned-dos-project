@@ -13,12 +13,15 @@ void objmanInit(ResourceList* res) {
 
 
 // Create an object manager
-ObjectManager objmanCreate() {
+ObjectManager objmanCreate(Stage* s) {
 
     ObjectManager objm;
 
     // Create components
     objm.player = plCreate(-152+16, 88);
+
+    // Parse objects from the tilemap
+    stageParseObjects(s, &objm);
 
     return objm;
 }

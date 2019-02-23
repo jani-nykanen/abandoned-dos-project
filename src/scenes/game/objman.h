@@ -19,7 +19,7 @@ typedef struct {
 } ObjectManager;
 
 // Create an object manager
-ObjectManager objmanCreate();
+ObjectManager objmanCreate(Stage* s);
 
 // Update objects
 void objmanUpdate(ObjectManager* objm, 

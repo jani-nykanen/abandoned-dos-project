@@ -22,7 +22,7 @@ void plInit(ResourceList* res) {
 // Compute target x
 static void plComputeHorizontalTarget(Player* pl, EventManager* evMan) {
 
-    const int16 TARGET_DIV = 4;
+    const int16 TARGET_DIV = 8;
 
     Vpad* vpad = evMan->vpad;
     pl->target.x = vpad->stick.x / TARGET_DIV * pl->speedMod;
@@ -71,14 +71,12 @@ static void plControl(Player* pl, EventManager* evMan, int16 steps) {
 // Move
 static void plMove(Player* pl, int16 steps) {
 
-    const int16 ACC_BASE = FIXED_PREC / 16;
+    const int16 ACC = FIXED_PREC / 32;
     const int16 GRAVITY = FIXED_PREC / 16;
-
-    int16 acc = ACC_BASE/4 * pl->speedMod;
 
     // Update axes
     gobjUpdateAxis(&pl->pos.x, &pl->speed.x,
-        pl->target.x, acc, steps);
+        pl->target.x, ACC, steps);
     gobjUpdateAxis(&pl->pos.y, &pl->speed.y,
         pl->target.y, GRAVITY, steps);   
 
@@ -92,12 +90,12 @@ static void plMove(Player* pl, int16 steps) {
 static void plAnimate(Player* pl, EventManager* evMan, int16 steps) {
 
     const int16 JUMP_HEIGHT[] = {
-        0, 0, -200, 0,
+        0, 0, -192, 0,
         -240, 0, 0, -336
     };
     const int16 SPEED_MOD[] = {
-        0, 0, 6, 0,
-        4, 0, 0, 3
+        0, 0, 12, 0,
+        6, 0, 0, 5
     };
     const int16 ANIM_SPEED = 4;
     const int16 RESTORE_SPEED = 2;
@@ -119,6 +117,7 @@ static void plAnimate(Player* pl, EventManager* evMan, int16 steps) {
             // Set horizontal speed
             pl->speedMod = SPEED_MOD[pl->endFrame];
             plComputeHorizontalTarget(pl, evMan);
+            pl->speed.x = pl->target.x;
 
             pl->oldEndFrame = pl->endFrame;
             pl->endFrame = 4;
