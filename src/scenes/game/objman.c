@@ -18,7 +18,7 @@ ObjectManager objmanCreate() {
     ObjectManager objm;
 
     // Create components
-    objm.player = plCreate(0, 88);
+    objm.player = plCreate(-152+16, 88);
 
     return objm;
 }
