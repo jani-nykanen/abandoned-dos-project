@@ -7,6 +7,8 @@
 #include <stdio.h>
 #include <malloc.h>
 
+#include "err.h"
+
 
 // Create a bitmap
 Bitmap* createBitmap(uint16 w, uint16 h, uint8* data) {
@@ -54,7 +56,7 @@ Bitmap* loadBitmap(const char* path) {
     FILE* f = fopen(path, "rb");
     if(f == NULL) {
 
-        printf("Could not load a file in:\n%s", path);
+        errThrowParam1("Could not load a file in: ", path);
         return NULL;
     }
 
@@ -66,7 +68,7 @@ Bitmap* loadBitmap(const char* path) {
     bmp = createBitmap(w, h, NULL);
     if(bmp == NULL) {
 
-        printf("Failed to create a bitmap!");
+        errThrowNoParam("Failed to create a bitmap!");
         return NULL;
     }
 

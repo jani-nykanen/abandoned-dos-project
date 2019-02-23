@@ -3,11 +3,14 @@
 
 #include "core.h"
 
+#include "err.h"
+
 #include <dos.h>
 #include <conio.h>
 #include <bios.h>
 
 #include <stdlib.h>
+#include <stdio.h>
 
 
 // Vertical sync
@@ -19,7 +22,7 @@ static void vsync() {
 
 
 // Initialize scenes
-static int16 initScenes(Core* c) {
+static int16 coreInitScenes(Core* c) {
 
     uint8 i;
     for(i=0; i < c->sceneCount; ++ i) {
@@ -35,7 +38,7 @@ static int16 initScenes(Core* c) {
 
 
 // Dispose
-static void dispose(Core* c) {
+static void coreDispose(Core* c) {
 
     uint8 i;
 
@@ -55,7 +58,7 @@ static void dispose(Core* c) {
 
 
 // Initialize graphics
-static int16 initGraphics(Core* c) {
+static int16 coreInitGraphics(Core* c) {
 
     // Create a graphics object
     c->g = createGraphics();
@@ -72,6 +75,9 @@ void createAppCore(Core* c) {
     c->frameSkip = 1;
     c->stepCount = 0;
     c->running = true;
+
+    // Initialize error handling
+    errInit();
 
     // Create an input manager
     c->input = createInputManager();
@@ -100,14 +106,15 @@ void coreLoop(Core*c) {
     bool updateFrame =false;
 
     // Initialize scenes before looping
-    if(initScenes(c) != 0) {
+    if(coreInitScenes(c) != 0) {
 
         c->running = false;
     }
 
     // Initialize graphics
-    if(initGraphics(c) != 0) {
+    if(coreInitGraphics(c) != 0) {
 
+        printf("Fatal error: %s\n", errGet());
         exit(1);
     }
 
@@ -153,7 +160,13 @@ void coreLoop(Core*c) {
     }
 
     // Dispose
-    dispose(c);
+    coreDispose(c);
+
+    // Write error, if any
+    if(errGet() != NULL) {
+
+        printf("Fatal error: %s\n", errGet());
+    }
 }
 
 

@@ -14,6 +14,7 @@
 
 #include "palette.h"
 #include "../util/mathext.h"
+#include "err.h"
 
 // Framebuffer size (we can asssume
 // no other size is wanted)
@@ -129,7 +130,7 @@ Graphics* createGraphics() {
     g = (Graphics*)malloc(sizeof(Graphics));
     if(g == NULL) {
 
-        printf("malloc error.\n");
+        errThrowNoParam("Memory allocation error!");
         return NULL;
     }
 
@@ -137,7 +138,7 @@ Graphics* createGraphics() {
     g->frame = (uint8*)malloc(sizeof(uint8)*FB_WIDTH*FB_HEIGHT);
     if(g->frame == NULL) {
 
-        printf("malloc error.\n");
+        errThrowNoParam("Memory allocation error!");
         return NULL;
     }
 

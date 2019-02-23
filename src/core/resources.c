@@ -9,6 +9,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "err.h"
+
 
 // Create an empty resource list
 ResourceList* createEmptyResourceList() {
@@ -17,7 +19,7 @@ ResourceList* createEmptyResourceList() {
         malloc(sizeof(ResourceList));
     if(rs == NULL) {
 
-        printf("Memory allocation error!\n");
+        errThrowNoParam("Memory allocation error!");
         return NULL;
     }
 

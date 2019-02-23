@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "err.h"
+
 
 // Load a tilemap
 Tilemap* loadTilemap(const char* path) {
@@ -18,7 +20,7 @@ Tilemap* loadTilemap(const char* path) {
     t = (Tilemap*)malloc(sizeof(Tilemap));
     if(t == NULL) {
 
-        printf("Memory allocation error!\n");
+        errThrowNoParam("Memory allocation error!");
         return NULL;
     }
 
@@ -26,7 +28,7 @@ Tilemap* loadTilemap(const char* path) {
     f = fopen(path, "rb");
     if(f == NULL) {
 
-        printf("Could not open a file in %s!\n", path);
+        errThrowParam1("Could not open a file in: ", path);
         return NULL;
     }
 
@@ -39,7 +41,7 @@ Tilemap* loadTilemap(const char* path) {
     t->layers = (uint8**)malloc(sizeof(uint8*) * t->layerCount);
     if(t->layers == NULL) {
 
-        printf("Memory allocation error!\n");
+        errThrowNoParam("Memory allocation error!");
         return NULL;
     }
 
@@ -50,7 +52,7 @@ Tilemap* loadTilemap(const char* path) {
         t->layers[i] = (uint8*)malloc(sizeof(uint8) * t->width * t->height);
         if(t->layers[i] == NULL) {
 
-            printf("Memory allocation error!\n");
+            errThrowNoParam("Memory allocation error!");
             return NULL;
         }
         // Read
