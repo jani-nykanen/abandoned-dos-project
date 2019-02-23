@@ -19,6 +19,16 @@ void plInit(ResourceList* res) {
 }
 
 
+// Compute target x
+static void plComputeHorizontalTarget(Player* pl, EventManager* evMan) {
+
+    const int16 TARGET_DIV = 4;
+
+    Vpad* vpad = evMan->vpad;
+    pl->target.x = vpad->stick.x / TARGET_DIV * pl->speedMod;
+}
+
+
 // Control
 static void plControl(Player* pl, EventManager* evMan, int16 steps) {
 
@@ -36,7 +46,7 @@ static void plControl(Player* pl, EventManager* evMan, int16 steps) {
     }
     else {
         
-        pl->target.x = vpad->stick.x;
+        plComputeHorizontalTarget(pl, evMan);
     }
 
     // Determine the end frame
@@ -61,12 +71,14 @@ static void plControl(Player* pl, EventManager* evMan, int16 steps) {
 // Move
 static void plMove(Player* pl, int16 steps) {
 
-    const int16 ACC_X = FIXED_PREC / 16;
+    const int16 ACC_BASE = FIXED_PREC / 16;
     const int16 GRAVITY = FIXED_PREC / 16;
+
+    int16 acc = ACC_BASE/4 * pl->speedMod;
 
     // Update axes
     gobjUpdateAxis(&pl->pos.x, &pl->speed.x,
-        pl->target.x, ACC_X, steps);
+        pl->target.x, acc, steps);
     gobjUpdateAxis(&pl->pos.y, &pl->speed.y,
         pl->target.y, GRAVITY, steps);   
 
@@ -77,14 +89,18 @@ static void plMove(Player* pl, int16 steps) {
 
 
 // Animate
-static void plAnimate(Player* pl, int16 steps) {
+static void plAnimate(Player* pl, EventManager* evMan, int16 steps) {
 
     const int16 JUMP_HEIGHT[] = {
-        0, 0, -192, 0,
-        -256, 0, 0, -320
+        0, 0, -200, 0,
+        -240, 0, 0, -336
+    };
+    const int16 SPEED_MOD[] = {
+        0, 0, 6, 0,
+        4, 0, 0, 3
     };
     const int16 ANIM_SPEED = 4;
-    const int16 RESTORE_SPEED = 1;
+    const int16 RESTORE_SPEED = 2;
 
     if(pl->canJump) {
 
@@ -92,10 +108,17 @@ static void plAnimate(Player* pl, int16 steps) {
         sprAnimate(&pl->spr, 0, 0, pl->endFrame+1, ANIM_SPEED, steps);
         if(pl->spr.frame == pl->endFrame+1) {
 
+            // Reset animation
             pl->spr.frame = pl->endFrame;
             pl->spr.count = 0;
+
+            // Set vertical speed
             pl->speed.y = JUMP_HEIGHT[pl->endFrame];
             pl->canJump = false;
+
+            // Set horizontal speed
+            pl->speedMod = SPEED_MOD[pl->endFrame];
+            plComputeHorizontalTarget(pl, evMan);
 
             pl->oldEndFrame = pl->endFrame;
             pl->endFrame = 4;
@@ -125,6 +148,7 @@ Player plCreate(int16 x, int16 y) {
     pl.dir = 0;
     pl.canJump = false;
     pl.endFrame = 4;
+    pl.speedMod = 4;
     
     // Collision box
     pl.width = 4;
@@ -145,7 +169,7 @@ void plUpdate(Player* pl, EventManager* evMan, int16 steps) {
     // Move
     plMove(pl, steps);
     // Animate
-    plAnimate(pl, steps);
+    plAnimate(pl, evMan, steps);
 
     pl->canJump = false;
 }

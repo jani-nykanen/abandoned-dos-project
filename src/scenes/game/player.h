@@ -27,6 +27,9 @@ typedef struct {
     int16 endFrame;
     // Old end frame
     int16 oldEndFrame;
+
+    // Speed modificator
+    int16 speedMod;
     
 } Player;
 
