@@ -79,25 +79,33 @@ static void plMove(Player* pl, int16 steps) {
 // Animate
 static void plAnimate(Player* pl, int16 steps) {
 
-    const int16 JUMP_HEIGHT = -288;
+    const int16 JUMP_HEIGHT[] = {
+        0, 0, -192, 0,
+        -256, 0, 0, -320
+    };
+    const int16 ANIM_SPEED = 4;
+    const int16 RESTORE_SPEED = 1;
 
     if(pl->canJump) {
 
         // Bounce
-        sprAnimate(&pl->spr, 0, 0, pl->endFrame+1, 3, steps);
+        sprAnimate(&pl->spr, 0, 0, pl->endFrame+1, ANIM_SPEED, steps);
         if(pl->spr.frame == pl->endFrame+1) {
 
             pl->spr.frame = pl->endFrame;
             pl->spr.count = 0;
-            pl->speed.y = JUMP_HEIGHT;
+            pl->speed.y = JUMP_HEIGHT[pl->endFrame];
+            pl->canJump = false;
 
             pl->oldEndFrame = pl->endFrame;
+            pl->endFrame = 4;
         }
     }
     else if(pl->spr.frame > 0) {
 
         // Animate back
-        sprAnimate(&pl->spr, 0, pl->oldEndFrame, 0, 1, steps);
+        sprAnimate(&pl->spr, 0, pl->oldEndFrame, 
+            0, RESTORE_SPEED, steps);
     }
 }
 
@@ -116,6 +124,7 @@ Player plCreate(int16 x, int16 y) {
     pl.target = pl.speed;
     pl.dir = 0;
     pl.canJump = false;
+    pl.endFrame = 4;
     
     // Collision box
     pl.width = 4;
