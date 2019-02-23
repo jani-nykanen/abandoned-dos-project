@@ -9,6 +9,7 @@ void objmanInit(ResourceList* res) {
 
     // Initialize all the components
     plInit(res);
+    initGem(res);
 }
 
 
@@ -19,6 +20,9 @@ ObjectManager objmanCreate(Stage* s) {
 
     // Create components
     objm.player = plCreate(-152+16, 88);
+
+    // Set defaults
+    objm.gemCount = 0;
 
     // Parse objects from the tilemap
     stageParseObjects(s, &objm);
@@ -33,6 +37,15 @@ void objmanUpdate(ObjectManager* objm, EventManager* evMan, Stage* s,
 
     const int16 PL_W = 1;
     const int16 PL_H = 2;
+
+    int16 i;
+
+    // Update gems
+    for(i = 0; i < objm->gemCount; ++ i) {
+
+        gemUpdate(&objm->gems[i], steps);
+        gemPlayerCollision(&objm->gems[i], &objm->player);
+    }
 
     // Update player
     plUpdate(&objm->player, evMan, steps);
@@ -50,11 +63,28 @@ void objmanUpdate(ObjectManager* objm, EventManager* evMan, Stage* s,
 // Draw objects
 void objmanDraw(ObjectManager* objm, Graphics* g) {
 
+    int16 i;
 
     // Translate, so we don't run out of pixels
     // (with precision 128 we cannot go too high)
     gMove(g, 304/2, 0);
 
+    // Draw gems
+    for(i = 0; i < objm->gemCount; ++ i) {
+
+        gemDraw(&objm->gems[i], g);
+    }
+
     // Draw player
     plDraw(&objm->player, g);
+}
+
+
+// Add a gem
+void objmanAddGem(ObjectManager* objm, int16 x, int16 y) {
+
+    if(objm->gemCount == GEM_MAX)
+        return;
+
+    objm->gems[objm->gemCount ++] = createGem(x, y);
 }

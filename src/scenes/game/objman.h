@@ -6,6 +6,9 @@
 
 #include "player.h"
 #include "stage.h"
+#include "gem.h"
+
+#define GEM_MAX 16
 
 // Initialize global content
 void objmanInit(ResourceList* res);
@@ -15,6 +18,11 @@ typedef struct {
 
     // Components
     Player player;
+    Gem gems [GEM_MAX];
+
+    // Objects counts
+    int16 gemCount;
+
 
 } ObjectManager;
 
@@ -28,5 +36,8 @@ void objmanUpdate(ObjectManager* objm,
 
 // Draw objects
 void objmanDraw(ObjectManager* objm, Graphics* g);
+
+// Add a gem
+void objmanAddGem(ObjectManager* objm, int16 x, int16 y);
 
 #endif // __OBJMAN__

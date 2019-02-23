@@ -20,7 +20,7 @@ typedef struct {
 } Sprite;
 
 // Create a sprite
-Sprite sprCreate(int16 w, int16 h);
+Sprite createSprite(int16 w, int16 h);
 
 // Animate a sprite
 void sprAnimate(Sprite* s, int16 row, int16 start, int16 end, 
@@ -34,5 +34,15 @@ void sprDrawFrame(Sprite* s, Graphics* g, Bitmap* bmp,
 // Draw a sprite
 void sprDraw(Sprite* s, Graphics* g, Bitmap* bmp, 
     int16 x, int16 y, bool flip);
+
+// Draw a sprite frame fast
+void sprDrawFrameFast(Sprite* s, Graphics* g, Bitmap* bmp, 
+    int16 frame, int16 row, 
+    int16 x, int16 y);
+
+// Draw a sprite fast
+void sprDrawFast(Sprite* s, Graphics* g, Bitmap* bmp, 
+    int16 x, int16 y);
+
 
 #endif // __SPRITE__

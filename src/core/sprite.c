@@ -6,7 +6,7 @@
 #include <stdio.h>
 
 // Create a sprite
-Sprite sprCreate(int16 w, int16 h) {
+Sprite createSprite(int16 w, int16 h) {
 
     Sprite s;
 
@@ -90,4 +90,22 @@ void sprDraw(Sprite* s, Graphics* g, Bitmap* bmp,
     int16 x, int16 y, bool flip) {
 
     sprDrawFrame(s, g, bmp, s->frame, s->row, x, y, flip);
+}
+
+
+// Draw a sprite frame
+void sprDrawFrameFast(Sprite* s,Graphics* g, Bitmap* bmp, 
+    int16 frame, int16 row, 
+    int16 x, int16 y) {
+
+    gDrawBitmapRegionFast(g, bmp, s->width*frame, s->height*row,
+        s->width, s->height, x, y);
+}
+
+
+// Draw a sprite
+void sprDrawFast(Sprite* s, Graphics* g, Bitmap* bmp, 
+    int16 x, int16 y) {
+
+    sprDrawFrameFast(s, g, bmp, s->frame, s->row, x, y);
 }

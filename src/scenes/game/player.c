@@ -154,7 +154,7 @@ Player plCreate(int16 x, int16 y) {
     pl.height = 16;
 
     // Create sprite
-    pl.spr = sprCreate(16, 24);
+    pl.spr = createSprite(16, 24);
 
     return pl;
 }

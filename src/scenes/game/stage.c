@@ -308,6 +308,11 @@ void stageParseObjects(Stage* s, void* p) {
                     oman->player.pos.x = ((x+1)*16-dx) * FIXED_PREC;
                     oman->player.pos.y = (y+1)*16 * FIXED_PREC;
                     break;
+
+                // Gem
+                case 1:
+                    objmanAddGem(oman, x*16 - dx, y*16);
+                    break;
             
                 default:
                     break;

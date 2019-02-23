@@ -19,7 +19,6 @@
 static ResourceList* res;
 // Bitmaps
 static Bitmap* bmpFont;
-static Bitmap* bmpPlayer;
 
 // Object manager
 static ObjectManager objm;
@@ -69,7 +68,8 @@ static int16 gameInit() {
     // Load resources
     cond = rsAddBitmap(res, "ASSETS/BITMAPS/FONT.BIN", "font")
         && rsAddBitmap(res, "ASSETS/BITMAPS/RAT.BIN", "rat")
-        && rsAddBitmap(res, "ASSETS/BITMAPS/TILESET.BIN", "tileset");
+        && rsAddBitmap(res, "ASSETS/BITMAPS/TILESET.BIN", "tileset")
+        && rsAddBitmap(res, "ASSETS/BITMAPS/GEM.BIN", "gem");
     if(!cond) {
 
         return 1;
@@ -84,7 +84,6 @@ static int16 gameInit() {
 
     // Get bitmaps
     bmpFont = (Bitmap*)rsGetResource(res, "font");
-    bmpPlayer = (Bitmap*)rsGetResource(res, "player");
 
     // Initialize global content
     objmanInit(res);
