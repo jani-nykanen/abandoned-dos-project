@@ -68,7 +68,7 @@ static int16 gameInit() {
     }
     // Load resources
     cond = rsAddBitmap(res, "ASSETS/BITMAPS/FONT.BIN", "font")
-        && rsAddBitmap(res, "ASSETS/BITMAPS/PLAYER.BIN", "player")
+        && rsAddBitmap(res, "ASSETS/BITMAPS/RAT.BIN", "rat")
         && rsAddBitmap(res, "ASSETS/BITMAPS/TILESET.BIN", "tileset");
     if(!cond) {
 

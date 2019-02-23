@@ -28,7 +28,8 @@ ObjectManager objmanCreate() {
 void objmanUpdate(ObjectManager* objm, EventManager* evMan, Stage* s,
     int16 steps) {
 
-    const int16 PL_RADIUS = 1;
+    const int16 PL_W = 1;
+    const int16 PL_H = 2;
 
     // Update player
     plUpdate(&objm->player, evMan, steps);
@@ -38,7 +39,7 @@ void objmanUpdate(ObjectManager* objm, EventManager* evMan, Stage* s,
 
     // Refresh player neighborhood
     stageRefreshNeighborhood(s, (GameObject*)&objm->player,
-        PL_RADIUS, PL_RADIUS);
+        PL_W, PL_H);
 
 }
 

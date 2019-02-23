@@ -23,7 +23,11 @@ typedef struct {
     int16 dir;
     // Sprite
     Sprite spr;
-
+    // End frame
+    int16 endFrame;
+    // Old end frame
+    int16 oldEndFrame;
+    
 } Player;
 
 // Create a player

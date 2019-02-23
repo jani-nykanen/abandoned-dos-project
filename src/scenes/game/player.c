@@ -8,73 +8,96 @@
 #include "../../util/mathext.h"
 
 // Bitmaps
-static Bitmap* bmpPlayer;
+static Bitmap* bmpRat;
 
 
 // Initialize global player content
 void plInit(ResourceList* res) {
 
     // Get bitmaps
-    bmpPlayer = (Bitmap*)rsGetResource(res, "player");
+    bmpRat = (Bitmap*)rsGetResource(res, "rat");
 }
 
 
 // Control
 static void plControl(Player* pl, EventManager* evMan, int16 steps) {
 
-    Vpad* vpad = evMan->vpad;
+    const int16 GRAVITY_TARGET = 2 * FIXED_PREC;
+    const int16 DELTA = FIXED_PREC / 4;
 
-    pl->target.x = vpad->stick.x;
-    pl->target.y = vpad->stick.y;
+    Vpad* vpad = evMan->vpad;
+    uint16 targetFrame;
+
+    // Set horizontal target
+    if(pl->canJump) {
+
+        pl->speed.x = 0;
+        pl->target.x = 0;
+    }
+    else {
+        
+        pl->target.x = vpad->stick.x;
+    }
+
+    // Determine the end frame
+    if(extAbs(vpad->stick.y) > DELTA) {
+
+        targetFrame = vpad->stick.y > 0 ? 2 : 7;
+    }
+    else {
+        
+        targetFrame = 4;
+    }
+    if(!pl->canJump || targetFrame > pl->spr.frame) {
+
+        pl->endFrame = targetFrame;
+    }
+
+    // Set gravity
+    pl->target.y = GRAVITY_TARGET;
 }
 
 
 // Move
 static void plMove(Player* pl, int16 steps) {
 
-    pl->speed.x = pl->target.x;
-    pl->speed.y = pl->target.y;
+    const int16 ACC_X = FIXED_PREC / 16;
+    const int16 GRAVITY = FIXED_PREC / 16;
 
-    pl->pos.x += pl->speed.x * steps;
-    pl->pos.y += pl->speed.y * steps;
+    // Update axes
+    gobjUpdateAxis(&pl->pos.x, &pl->speed.x,
+        pl->target.x, ACC_X, steps);
+    gobjUpdateAxis(&pl->pos.y, &pl->speed.y,
+        pl->target.y, GRAVITY, steps);   
 
     // Determine direction
-    if(pl->speed.x != 0 || pl->speed.y != 0) {
-
-        if( extAbs(pl->speed.x) > extAbs(pl->speed.y) ) {
-
-            if(pl->speed.x > 0)
-                pl->dir = 2;
-
-            else
-                pl->dir = 3;
-        }
-        else {
-
-            if(pl->speed.y > 0)
-                pl->dir = 0;
-
-            else
-                pl->dir = 1;
-        }
-    }
+    if(pl->target.x != 0)
+        pl->dir = pl->target.x < 0 ? -1 : 1;
 }
 
 
 // Animate
 static void plAnimate(Player* pl, int16 steps) {
 
-    int16 dir = pl->dir < 3 ? pl->dir : 2;
+    const int16 JUMP_HEIGHT = -288;
 
-    // Moving
-    if(pl->speed.x != 0 || pl->speed.y != 0) {
+    if(pl->canJump) {
 
-        sprAnimate(&pl->spr, dir, 0, 3, 7, steps);
+        // Bounce
+        sprAnimate(&pl->spr, 0, 0, pl->endFrame+1, 3, steps);
+        if(pl->spr.frame == pl->endFrame+1) {
+
+            pl->spr.frame = pl->endFrame;
+            pl->spr.count = 0;
+            pl->speed.y = JUMP_HEIGHT;
+
+            pl->oldEndFrame = pl->endFrame;
+        }
     }
-    // Standing
-    else {
+    else if(pl->spr.frame > 0) {
 
-        sprAnimate(&pl->spr, dir, 0, 0, 0, steps);
+        // Animate back
+        sprAnimate(&pl->spr, 0, pl->oldEndFrame, 0, 1, steps);
     }
 }
 
@@ -95,11 +118,11 @@ Player plCreate(int16 x, int16 y) {
     pl.canJump = false;
     
     // Collision box
-    pl.width = 8;
-    pl.height = 12;
+    pl.width = 4;
+    pl.height = 16;
 
     // Create sprite
-    pl.spr = sprCreate(16, 16);
+    pl.spr = sprCreate(16, 24);
 
     return pl;
 }
@@ -122,10 +145,10 @@ void plUpdate(Player* pl, EventManager* evMan, int16 steps) {
 // Draw player
 void plDraw(Player* pl, Graphics* g) {
 
-    sprDraw(&pl->spr, g, bmpPlayer, 
+    sprDraw(&pl->spr, g, bmpRat, 
         (pl->pos.x/FIXED_PREC)-8,
-        (pl->pos.y/FIXED_PREC)-16,
-        pl->dir == 3
+        (pl->pos.y/FIXED_PREC)-24,
+        pl->dir == -1
         );
 }
 

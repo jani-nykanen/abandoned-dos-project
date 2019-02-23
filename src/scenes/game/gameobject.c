@@ -108,3 +108,26 @@ bool gobjCeilingCollision(GameObject* gobj,
     
     return false;
 }
+
+
+// Update axis
+void gobjUpdateAxis(int16* axis, int16 *speed, int16 target, 
+    int16 acc, int16 steps) {
+
+    // Update speed
+    if(*speed < target) {
+
+        *speed += acc * steps;
+        if(*speed > target)
+            *speed = target;
+    }
+    else  if(*speed > target) {
+
+        *speed -= acc * steps;
+        if(*speed < target)
+            *speed = target;
+    }
+
+    // Move
+    *axis += *speed * steps;
+}

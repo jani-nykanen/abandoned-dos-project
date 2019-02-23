@@ -37,4 +37,8 @@ bool gobjWallCollision(GameObject* gobj,
 bool gobjCeilingCollision(GameObject* gobj, 
     int16 x, int16 y, int16 w, int16 steps);
 
+// Update axis
+void gobjUpdateAxis(int16* axis, int16* speed, int16 target, 
+    int16 acc, int16 steps);
+
 #endif // __GAMEOBJECT__
