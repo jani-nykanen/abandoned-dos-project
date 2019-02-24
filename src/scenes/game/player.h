@@ -54,6 +54,9 @@ void plUpdate(Player* pl, EventManager* evMan, int16 steps);
 // Draw player
 void plDraw(Player* pl, Graphics* g);
 
+// Stage collision
+void plStageCollision(Player* pl, void* s, void* objm, int16 steps);
+
 // Add a gem
 void plAddGem(Player* pl);
 

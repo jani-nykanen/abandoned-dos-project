@@ -40,4 +40,7 @@ void objmanDraw(ObjectManager* objm, Graphics* g);
 // Add a gem
 void objmanAddGem(ObjectManager* objm, int16 x, int16 y);
 
+// Clear objects (excluding player)
+void objmanClearObjects(ObjectManager* objm);
+
 #endif // __OBJMAN__

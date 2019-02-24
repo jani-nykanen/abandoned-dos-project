@@ -29,6 +29,12 @@ typedef struct {
     // Wave "timer"
     int16 waveTimer;
 
+    // Room index
+    int16 roomIndex;
+
+    // Whether force redraw
+    bool forceRedraw;
+
 } Stage;
 
 // Create stage. Returns a pointer
@@ -52,6 +58,9 @@ void stageCollision(Stage* s, GameObject* gobj, int16 steps);
 
 // Parse objects
 void stageParseObjects(Stage* s, void* oman);
+
+// Force redraw
+void stageForceRedraw(Stage* s);
 
 // Destroy stage
 void destroyStage(Stage* s);

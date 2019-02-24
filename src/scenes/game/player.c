@@ -8,6 +8,8 @@
 #include "../../util/mathext.h"
 
 #include "game.h"
+#include "stage.h"
+#include "objman.h"
 
 // Bitmaps
 static Bitmap* bmpRat;
@@ -221,6 +223,43 @@ void plDraw(Player* pl, Graphics* g) {
         (pl->pos.y/FIXED_PREC)-24,
         pl->dir == -1
         );
+}
+
+
+// Stage collision
+void plStageCollision(Player* pl, void* _s, void* _objm, int16 steps) {
+
+    Stage* s = _s;
+    ObjectManager* objm = (ObjectManager*)_objm;
+
+    // Left-side collision
+    gobjWallCollision((GameObject*)pl, 
+        -VIEW_WIDTH/2, -16, VIEW_HEIGHT+32, -1, steps);
+
+    // Tile collisions
+    stageCollision(s, (GameObject*) pl, steps);
+
+    // Right-side collision
+    if(pl->pos.x/FIXED_PREC+pl->width/2 > VIEW_WIDTH/2) {
+
+        // Transition to the next room
+        ++ s->roomIndex; 
+
+        // Clear objects
+        objmanClearObjects(objm);
+        // Parse new objects
+        stageParseObjects(s, objm);
+
+        // Move player to the left
+        pl->pos.x -= (VIEW_WIDTH-pl->width/2) * FIXED_PREC;
+        // Set speed to zero
+        pl->speed.x = 0;
+        pl->dir = 1;
+
+        // Redraw the stage
+        stageForceRedraw(s);
+    }
+    
 }
 
 

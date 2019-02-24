@@ -46,9 +46,7 @@ void objmanUpdate(ObjectManager* objm, EventManager* evMan, Stage* s,
 
     // Update player
     plUpdate(&objm->player, evMan, steps);
-
-    // Update collisions
-    stageCollision(s, (GameObject*)&objm->player, steps);
+    plStageCollision(&objm->player, (void*)s, (void*)objm, steps);
 
     // Refresh player neighborhood
     stageRefreshNeighborhood(s, (GameObject*)&objm->player,
@@ -84,4 +82,11 @@ void objmanAddGem(ObjectManager* objm, int16 x, int16 y) {
         return;
 
     objm->gems[objm->gemCount ++] = createGem(x, y);
+}
+
+
+// Clear objects (excluding player)
+void objmanClearObjects(ObjectManager* objm) {
+
+    objm->gemCount = 0;
 }

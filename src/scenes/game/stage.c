@@ -9,6 +9,7 @@
 #include <stdio.h>
 
 #include "objman.h"
+#include "game.h"
 
 #define PATH_LEN 16
 
@@ -48,6 +49,7 @@ Stage* createStage(uint8 index, Bitmap* bmpTileset) {
 
     //char path[PATH_LEN];
     uint8 i;
+    int16 w = VIEW_WIDTH / 16;
 
     // Allocate memory
     Stage* s = (Stage*)malloc(sizeof(Stage));
@@ -68,7 +70,7 @@ Stage* createStage(uint8 index, Bitmap* bmpTileset) {
 
     // Allocate memory for the update buffer
     s->updateBuffer = (bool*)malloc(sizeof(bool) 
-        * s->tmap->width * s->tmap->height);
+        * w * s->tmap->height);
     if(s->updateBuffer == NULL) {
 
         printf("Memory allocation error!\n");
@@ -77,7 +79,7 @@ Stage* createStage(uint8 index, Bitmap* bmpTileset) {
         return NULL;
     }
     // Set to false
-    for(i = 0; i < s->tmap->width*s->tmap->height; ++ i) {
+    for(i = 0; i < w*s->tmap->height; ++ i) {
 
         s->updateBuffer[i] = false;
     }
@@ -88,6 +90,8 @@ Stage* createStage(uint8 index, Bitmap* bmpTileset) {
     // Set defaults
     s->waterPos = 0;
     s->waveTimer = 0;
+    s->roomIndex = 0;
+    s->forceRedraw = false;
 
     return s;
 }
@@ -119,6 +123,8 @@ void stageDraw(Stage* s, Graphics* g) {
 
     int16 x, y;
     int16 sx, sy;
+    int16 w = VIEW_WIDTH / 16;
+    int16 trx = w*s->roomIndex;
     uint8 t;
 
     // Disable clipping for waster rendering
@@ -127,10 +133,10 @@ void stageDraw(Stage* s, Graphics* g) {
     // Draw tiles
     for(y = 0; y < s->tmap->height; ++ y) {
 
-        for(x = 0; x < s->tmap->width; ++ x) {
+        for(x = 0; x < w; ++ x) {
 
             // Get tile
-            t = mapGetTile(s->tmap, 0, x, y);
+            t = mapGetTile(s->tmap, 0, trx+x, y);
 
             // If water, use own routine
             if(t == WATER_TILE) {
@@ -139,11 +145,13 @@ void stageDraw(Stage* s, Graphics* g) {
                 continue;
             }
 
-            if(s->updateBuffer[y*s->tmap->width+ x])
+            if(!s->forceRedraw && s->updateBuffer[y*w+ x])
                 continue;
 
             // Update update buffer
-            s->updateBuffer[y*s->tmap->width+ x] = true;
+            if(!s->forceRedraw)
+                s->updateBuffer[y*w+ x] = true;
+
             // Check if we want to draw a tile or background
             if(t == 0) {
 
@@ -160,6 +168,7 @@ void stageDraw(Stage* s, Graphics* g) {
             gDrawBitmapRegionFast(g, s->bmpTileset, sx, sy, 16, 16, x*16, y*16);
         }
     }
+    s->forceRedraw = false;
 
     // Reset clipping
     gToggleClipping(g, true);
@@ -174,7 +183,8 @@ void stageRefreshNeighborhood(Stage* s,
     int16 x, y;
     int16 sx, sy;
     int16 ex, ey;
-    int16 dx = s->tmap->width*16 / 2;
+    int16 dx = VIEW_WIDTH/ 2;
+    int16 sw = VIEW_WIDTH / 16;
 
     // Start position
     // TODO: Pass center point?
@@ -198,7 +208,7 @@ void stageRefreshNeighborhood(Stage* s,
             if(x >= s->tmap->width)
                 break;
 
-            s->updateBuffer[y*s->tmap->width + x] = false;
+            s->updateBuffer[y*sw + x] = false;
         }
 
         if(y >= s->tmap->height)
@@ -216,8 +226,10 @@ void stageCollision(Stage* s, GameObject* obj, int16 steps) {
     int16 x, y;
     int16 sx, sy;
     int16 ex, ey;
-    int16 dx = s->tmap->width*16 / 2;
     uint8 colID;
+    int16 w = VIEW_WIDTH / 16;
+    int16 trx = w*s->roomIndex;
+    int16 dx = w*16 / 2;
 
     // Start position
     // TODO: Pass center point?
@@ -243,7 +255,7 @@ void stageCollision(Stage* s, GameObject* obj, int16 steps) {
                 break;
 
             // Get collision tile
-            colID = mapGetTile(s->tmap, 1, x, y);
+            colID = mapGetTile(s->tmap, 1, trx+x, y);
             if(colID == 0)
                 continue;
             colID -= 128;
@@ -288,15 +300,17 @@ void stageParseObjects(Stage* s, void* p) {
 
     int16 x, y;
     int16 tileID;
-    int16 dx = s->tmap->width*16 / 2;
+    int16 w = VIEW_WIDTH / 16;
+    int16 dx = w*16 / 2;
+    int16 trx = w*s->roomIndex;
 
     ObjectManager* oman = (ObjectManager*)p;
 
     for(y = 0; y < s->tmap->height; ++ y) {
 
-        for(x = 0; x < s->tmap->width; ++ x) {
+        for(x = 0; x < w; ++ x) {
 
-            tileID = mapGetTile(s->tmap, 2, x, y);
+            tileID = mapGetTile(s->tmap, 2, x+trx, y);
             if(tileID == 0)
                 continue;
             tileID -= 161;
@@ -319,6 +333,13 @@ void stageParseObjects(Stage* s, void* p) {
         }
     }
 
+}
+
+
+// Force redraw
+void stageForceRedraw(Stage* s) {
+
+    s->forceRedraw = true;
 }
 
 
