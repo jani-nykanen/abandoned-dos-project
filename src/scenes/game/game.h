@@ -10,6 +10,9 @@
 #define VIEW_WIDTH 304
 #define VIEW_HEIGHT 160
 
+// Refresh info
+void gameRefreshInfo();
+
 // Get game scene
 Scene getGameScene();
 

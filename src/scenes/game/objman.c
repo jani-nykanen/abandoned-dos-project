@@ -18,9 +18,6 @@ ObjectManager objmanCreate(Stage* s) {
 
     ObjectManager objm;
 
-    // Create components
-    objm.player = plCreate(-152+16, 88);
-
     // Set defaults
     objm.gemCount = 0;
 

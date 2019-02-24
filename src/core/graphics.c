@@ -404,7 +404,7 @@ void gDrawBitmapRegionFast(Graphics* g, Bitmap* bmp,
 
 // Draw text fast (ignoring alpha)
 void gDrawTextFast(Graphics* g, Bitmap* font, const char* text, 
-    int16 dx, int16 dy, bool center) {
+    int16 dx, int16 dy, int16 xoff, int16 yoff, bool center) {
 
     uint8 len = strlen((const char*)text);
 
@@ -419,7 +419,7 @@ void gDrawTextFast(Graphics* g, Bitmap* font, const char* text,
     // Center
     if(center) {
 
-        dx -= cw*len/2;
+        dx -= (cw+xoff)*len/2;
         x = dx;
     }
 
@@ -432,7 +432,7 @@ void gDrawTextFast(Graphics* g, Bitmap* font, const char* text,
         if(c == '\n') {
 
             x = dx;
-            y += ch;
+            y += ch + yoff;
             continue;
         }
 
@@ -443,7 +443,7 @@ void gDrawTextFast(Graphics* g, Bitmap* font, const char* text,
         gDrawBitmapRegionFast(g, font, sx*cw, sy*ch, 
             cw, ch, x, y);
 
-        x += cw;
+        x += cw + xoff;
     }
 }
 

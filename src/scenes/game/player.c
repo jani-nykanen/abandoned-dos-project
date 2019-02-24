@@ -7,6 +7,8 @@
 
 #include "../../util/mathext.h"
 
+#include "game.h"
+
 // Bitmaps
 static Bitmap* bmpRat;
 
@@ -68,11 +70,36 @@ static void plControl(Player* pl, EventManager* evMan, int16 steps) {
 }
 
 
+// Die
+static void plDie(Player* pl) {
+
+    // Reset
+    pl->pos = pl->startPos;
+    pl->speed = vec2(0, 0);
+    pl->target = pl->speed;
+    pl->spr.frame = 0;
+    pl->spr.row = 0;
+    pl->dir = 1;
+
+    // Reduce life, if any
+    if(pl->lives > 0) {
+
+        -- pl->lives;
+        gameRefreshInfo();
+    }
+    else {
+
+        // ...
+    }
+}
+
+
 // Move
 static void plMove(Player* pl, int16 steps) {
 
     const int16 ACC = FIXED_PREC / 32;
     const int16 GRAVITY = FIXED_PREC / 16;
+    const int16 HEIGHT = 24;
 
     // Update axes
     gobjUpdateAxis(&pl->pos.x, &pl->speed.x,
@@ -83,6 +110,12 @@ static void plMove(Player* pl, int16 steps) {
     // Determine direction
     if(pl->target.x != 0)
         pl->dir = pl->target.x < 0 ? -1 : 1;
+
+    // Outside the room boundary, die
+    if(pl->pos.y/FIXED_PREC - HEIGHT > VIEW_HEIGHT) {
+
+        plDie(pl);
+    }
 }
 
 
@@ -137,8 +170,10 @@ Player plCreate(int16 x, int16 y) {
 
     Player pl;
 
+    // Set initial position & store it
     pl.pos.x = x * FIXED_PREC;
     pl.pos.y = y * FIXED_PREC;
+    pl.startPos = pl.pos;
 
     // Set defaults
     pl.speed.x = 0;
@@ -148,6 +183,10 @@ Player plCreate(int16 x, int16 y) {
     pl.canJump = false;
     pl.endFrame = 4;
     pl.speedMod = 4;
+
+    // Default lives & gems
+    pl.lives = PL_LIFE_MAX -2;
+    pl.gems = 0;
     
     // Collision box
     pl.width = 4;
@@ -184,3 +223,17 @@ void plDraw(Player* pl, Graphics* g) {
         );
 }
 
+
+// Add a gem
+void plAddGem(Player* pl) {
+
+    if(++ pl->gems >= PL_GEM_MAX) {
+
+        pl->gems = 0;
+        if(pl->lives < PL_LIFE_MAX)
+            ++ pl->lives; 
+    }
+
+    // Refresh info
+    gameRefreshInfo();
+}

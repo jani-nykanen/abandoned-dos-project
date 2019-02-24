@@ -56,6 +56,7 @@ void gemPlayerCollision(Gem* gem, Player* pl) {
        && py >= gem->pos.y && py-h <= gem->pos.y+16 ) {
 
         gem->exist = false;
+        plAddGem(pl);
     }
 }
 

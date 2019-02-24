@@ -305,8 +305,7 @@ void stageParseObjects(Stage* s, void* p) {
             {
                 // Player
                 case 0:
-                    oman->player.pos.x = ((x+1)*16-dx) * FIXED_PREC;
-                    oman->player.pos.y = (y+1)*16 * FIXED_PREC;
+                    oman->player = plCreate((x+1)*16-dx, (y+1)*16);
                     break;
 
                 // Gem

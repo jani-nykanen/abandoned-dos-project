@@ -11,6 +11,10 @@
 
 #include "gameobject.h"
 
+// Constants
+#define PL_GEM_MAX 5
+#define PL_LIFE_MAX 6
+
 // Initialize global player content
 void plInit(ResourceList* res);
 
@@ -18,6 +22,9 @@ void plInit(ResourceList* res);
 typedef struct {
 
     IMPLEMENT_GAME_OBJECT
+
+    // Starting position
+    Vector2 startPos;
 
     // Direction
     int16 dir;
@@ -30,6 +37,11 @@ typedef struct {
 
     // Speed modificator
     int16 speedMod;
+
+    // Lives
+    int16 lives;
+    // Gems
+    int16 gems;
     
 } Player;
 
@@ -41,5 +53,8 @@ void plUpdate(Player* pl, EventManager* evMan, int16 steps);
 
 // Draw player
 void plDraw(Player* pl, Graphics* g);
+
+// Add a gem
+void plAddGem(Player* pl);
 
 #endif // __PLAYER__

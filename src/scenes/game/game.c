@@ -28,6 +28,53 @@ static Stage* stage;
 // Whether the frame has to be
 // refreshed
 static bool refreshFrame;
+// Refresh info
+static bool refreshInfo;
+
+
+// Draw info
+static void gameDrawInfo(Graphics* g) {
+
+    const int16 LIVES_X = 48;
+    const int16 GEMS_X = 160;
+    const int16 STAGE_X = 320-LIVES_X;
+    const int16 TEXT_Y = VIEW_HEIGHT + 14;
+    const int16 YOFF = 12;
+
+    char gemStr [PL_GEM_MAX +1];
+    char lifeStr [PL_LIFE_MAX +1];
+    int16 i;
+
+    if(!refreshInfo) return;
+    refreshInfo = false;
+
+    // Determine gem string
+    for(i = 0; i < PL_GEM_MAX; ++ i) {
+
+        gemStr[i] = (i < objm.player.gems) ? 2 : 1;
+    }
+    gemStr[i] = '\0';
+
+    // Determine life string
+    for(i = 0; i < PL_LIFE_MAX; ++ i) {
+
+        lifeStr[i] = (i < objm.player.lives) ? 4 : 3;
+    }
+    lifeStr[i] = '\0';
+
+    // Draw lives
+    gDrawTextFast(g, bmpFont, "LIVES", LIVES_X, TEXT_Y, 0, 0, true);
+    gDrawTextFast(g, bmpFont, lifeStr, LIVES_X, TEXT_Y+YOFF, 2, 0, true);
+
+    // Draw gems
+    gDrawTextFast(g, bmpFont, "GEMS", GEMS_X, TEXT_Y, 0, 0, true);
+    gDrawTextFast(g, bmpFont, gemStr, GEMS_X, TEXT_Y+YOFF, 2, 0, true);
+
+    // Draw stage
+    gDrawTextFast(g, bmpFont, "STAGE", STAGE_X, TEXT_Y, 0, 0, true);
+    gDrawTextFast(g, bmpFont, "1-1", STAGE_X, TEXT_Y+YOFF, 0, 0, true);
+
+}
 
 
 // Draw frame (= the stuff around the viewport, really)
@@ -40,11 +87,7 @@ static void gameDrawFrame(Graphics* g) {
     if(!refreshFrame) return;
     refreshFrame = false;
 
-    // Reset view
-    gResetViewport(g);
-    gTranslate(g, 0, 0);
-
-    // Clear to black
+    // Clear to blue
     gClearScreen(g, 47);
 
     // Frame
@@ -92,6 +135,7 @@ static int16 gameInit() {
 
     // Set defaults
     refreshFrame = true;
+    refreshInfo = true;
 
     return 0;
 }
@@ -124,6 +168,8 @@ static void gameDraw(Graphics* g) {
     gResetViewport(g);
     // Draw frame
     gameDrawFrame(g);
+    // Draw info
+    gameDrawInfo(g);
 
     // Set viewport
     gSetViewport(g, 8, 8, VIEW_WIDTH, VIEW_HEIGHT);
@@ -142,6 +188,13 @@ static void gameDispose() {
 
     // Destroy content
     destroyResList(res);
+}
+
+
+// Refresh info
+void gameRefreshInfo() {
+
+    refreshInfo = true;
 }
 
 

@@ -76,7 +76,7 @@ void gDrawBitmapRegionFast(Graphics* g, Bitmap* bmp,
 
 // Draw text fast (ignoring alpha)
 void gDrawTextFast(Graphics* g, Bitmap* font, const char* text, 
-    int16 x, int16 y, bool center);
+    int16 x, int16 y, int16 xoff, int16 yoff, bool center);
 
 // Draw a bitmap
 void gDrawBitmap(Graphics* g, Bitmap* bmp, int16 x, int16 y,
