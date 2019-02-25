@@ -343,8 +343,7 @@ void stageCollision(Stage* s, GameObject* obj, int16 steps) {
             }
             else {
 
-                // Check collisions
-                // TODO: Check tiles from a list etc?
+                // Check base collision
                 // 1) Floor
                 if(colID == 1 || colID == 5 || colID == 7 || colID == 8 ||
                 colID == 11 || colID == 12 || colID == 14 || colID == 15 ) {

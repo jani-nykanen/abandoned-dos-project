@@ -42,6 +42,9 @@ typedef struct {
     int16 lives;
     // Gems
     int16 gems;
+
+    // Is respawning
+    bool respawning;
     
 } Player;
 

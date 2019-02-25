@@ -15,7 +15,9 @@
     int16 width; \
     int16 height; \
     bool canJump; \
-    void (*hurtCB) (void*);
+    void (*hurtCB) (void*); \
+    bool dying; \
+    int16 deathTimer;
 
 // Base game object type
 typedef struct {

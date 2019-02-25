@@ -11,6 +11,10 @@
 #include "stage.h"
 #include "objman.h"
 
+// Constants
+static const int16 DEATH_INTERVAL = 2;
+static const int16 DEATH_MAX = 8;
+
 // Bitmaps
 static Bitmap* bmpRat;
 
@@ -83,6 +87,10 @@ static void plDie(Player* pl) {
     pl->spr.row = 0;
     pl->dir = 1;
 
+    // Make respawn
+    pl->respawning = true;
+    pl->deathTimer = DEATH_INTERVAL * DEATH_MAX;
+
     // Reduce life, if any
     if(pl->lives > 0) {
 
@@ -94,9 +102,16 @@ static void plDie(Player* pl) {
         // ...
     }
 }
+
+
 // Die callback
 static void _dieCB(void* gobj) {
-    plDie((Player*)gobj);
+    
+    Player* pl = (Player*)gobj;
+
+    // Set player dying
+    pl->dying = true;
+    pl->deathTimer = 0;
 }
 
 
@@ -171,6 +186,30 @@ static void plAnimate(Player* pl, EventManager* evMan, int16 steps) {
 }
 
 
+// Update death
+static void plUpdateDeath(Player* pl, int16 steps) {
+
+    pl->deathTimer += steps;
+    if(pl->deathTimer >= DEATH_INTERVAL * DEATH_MAX) {
+
+        pl->dying = false;
+        plDie(pl);
+    }
+}
+
+
+// Update respawn
+static void plUpdateRespawn(Player* pl, int16 steps) {
+
+    pl->deathTimer -= steps;
+    if(pl->deathTimer <= 0) {
+
+        pl->respawning = false;
+        pl->deathTimer = 0;
+    }
+}
+
+
 // Create a player
 Player plCreate(int16 x, int16 y) {
 
@@ -189,6 +228,9 @@ Player plCreate(int16 x, int16 y) {
     pl.canJump = false;
     pl.endFrame = 4;
     pl.speedMod = 4;
+    pl.dying = false;
+    pl.deathTimer = DEATH_INTERVAL * DEATH_MAX;
+    pl.respawning = true;
 
     // Default lives & gems
     pl.lives = PL_LIFE_MAX -2;
@@ -210,6 +252,19 @@ Player plCreate(int16 x, int16 y) {
 
 // Update player
 void plUpdate(Player* pl, EventManager* evMan, int16 steps) {
+
+    // Die, if dying
+    if(pl->dying) {
+
+        plUpdateDeath(pl, steps);
+        return;
+    }
+    // Or maybe respawning?
+    else if(pl->respawning) {
+
+        plUpdateRespawn(pl, steps);
+        return;
+    }
 
     // Control
     plControl(pl, evMan, steps);
@@ -237,11 +292,30 @@ void plTransition(Player* pl, int16 speed, int16 steps) {
 // Draw player
 void plDraw(Player* pl, Graphics* g) {
 
-    sprDraw(&pl->spr, g, bmpRat, 
-        (pl->pos.x/FIXED_PREC)-8,
-        (pl->pos.y/FIXED_PREC)-24,
-        pl->dir == -1
-        );
+    int16 skip;
+
+    // Make appear or disappear
+    if(pl->dying || pl->respawning) {
+
+        skip = DEATH_MAX - pl->deathTimer / DEATH_INTERVAL;
+        if(skip == 0) return;
+
+        sprDrawSkip(&pl->spr, g, bmpRat, 
+            (pl->pos.x/FIXED_PREC)-8,
+            (pl->pos.y/FIXED_PREC)-24,
+            skip,
+            pl->dir == -1
+            );
+    }
+    // Draw basic sprite
+    else {
+
+        sprDraw(&pl->spr, g, bmpRat, 
+            (pl->pos.x/FIXED_PREC)-8,
+            (pl->pos.y/FIXED_PREC)-24,
+            pl->dir == -1
+            );
+    }
 }
 
 

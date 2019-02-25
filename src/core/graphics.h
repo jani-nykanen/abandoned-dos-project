@@ -87,4 +87,9 @@ void gDrawBitmapRegion(Graphics* g, Bitmap* bmp,
     int16 sx, int16 sy, int16 sw, int16 sh, int16 dx, int16 dy,
     bool flip);    
 
+// Draw a bitmap region, but skip some pixels
+void gDrawBitmapRegionSkip(Graphics* g, Bitmap* bmp, 
+    int16 sx, int16 sy, int16 sw, int16 sh, int16 dx, int16 dy,
+    int16 skip, bool flip);    
+
 #endif // __GRAPHICS_H__

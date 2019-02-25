@@ -26,6 +26,15 @@ Sprite createSprite(int16 w, int16 h);
 void sprAnimate(Sprite* s, int16 row, int16 start, int16 end, 
     int16 speed, int16 steps);
 
+// Draw a sprite frame with skipped pixels
+void sprDrawFrameSkip(Sprite* s, Graphics* g, Bitmap* bmp, 
+    int16 frame, int16 row, 
+    int16 x, int16 y, int16 skip, bool flip);
+
+// Draw a sprite with skipped pixels
+void sprDrawSkip(Sprite* s, Graphics* g, Bitmap* bmp, 
+    int16 x, int16 y, int16 skip, bool flip);
+
 // Draw a sprite frame
 void sprDrawFrame(Sprite* s, Graphics* g, Bitmap* bmp, 
     int16 frame, int16 row, 

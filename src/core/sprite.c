@@ -75,6 +75,24 @@ void sprAnimate(Sprite* s, int16 row, int16 start, int16 end,
 }
 
 
+// Draw a sprite frame with skipped pixels
+void sprDrawFrameSkip(Sprite* s, Graphics* g, Bitmap* bmp, 
+    int16 frame, int16 row, 
+    int16 x, int16 y, int16 skip, bool flip) {
+
+     gDrawBitmapRegionSkip(g, bmp, s->width*frame, s->height*row,
+        s->width, s->height, x, y, skip, flip);
+}
+
+
+// Draw a sprite with skipped pixels
+void sprDrawSkip(Sprite* s, Graphics* g, Bitmap* bmp, 
+    int16 x, int16 y, int16 skip, bool flip) {
+
+    sprDrawFrameSkip(s, g, bmp, s->frame, s->row, x, y, skip, flip);
+}
+
+
 // Draw a sprite frame
 void sprDrawFrame(Sprite* s,Graphics* g, Bitmap* bmp, 
     int16 frame, int16 row, 

@@ -15,7 +15,7 @@ bool gobjFloorCollision(GameObject* gobj,
 
     int16 px, py, sy;
 
-    if(gobj->speed.y < 0) 
+    if(gobj->dying || gobj->speed.y < 0) 
         return false;
 
     py = gobj->pos.y/FIXED_PREC;
@@ -50,7 +50,7 @@ bool gobjWallCollision(GameObject* gobj,
 
     int16 px, py, sx;
 
-    if(gobj->speed.x*dir < 0) 
+    if(gobj->dying || gobj->speed.x*dir < 0) 
         return false;
 
     px = gobj->pos.x/FIXED_PREC;
@@ -87,7 +87,7 @@ bool gobjCeilingCollision(GameObject* gobj,
 
     int16 px, py, sy;
 
-    if(gobj->speed.y > 0) 
+    if(gobj->dying || gobj->speed.y > 0) 
         return false;
 
     py = gobj->pos.y/FIXED_PREC;
@@ -119,7 +119,7 @@ bool gobjHurtCollision(GameObject* gobj,
     int16 px = gobj->pos.x / FIXED_PREC;
     int16 py = gobj->pos.y / FIXED_PREC;
 
-    if(gobj->hurtCB == NULL) return false;
+    if(gobj->dying || gobj->hurtCB == NULL) return false;
 
     // Check if inside the collision area
     if(px + gobj->width/2 >= x && px - gobj->width/2 <= x+w

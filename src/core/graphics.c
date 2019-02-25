@@ -461,6 +461,15 @@ void gDrawBitmapRegion(Graphics* g, Bitmap* bmp,
     int16 sx, int16 sy, int16 sw, int16 sh, int16 dx, int16 dy,
     bool flip) {
 
+    gDrawBitmapRegionSkip(g, bmp, sx, sy, sw, sh, dx, dy, 0, flip);
+}
+
+
+// Draw a bitmap region, but skip some pixels
+void gDrawBitmapRegionSkip(Graphics* g, Bitmap* bmp, 
+    int16 sx, int16 sy, int16 sw, int16 sh, int16 dx, int16 dy,
+    int16 skip, bool flip) {
+
     int16 x, y;
     uint16 offset;
     uint16 boff;
@@ -487,7 +496,8 @@ void gDrawBitmapRegion(Graphics* g, Bitmap* bmp,
             pixel = bmp->data[boff];
             // Check if not alpha pixel
             // (i.e not transparent)
-            if(pixel != ALPHA) {
+            if(pixel != ALPHA &&
+              (skip == 0 || (x % skip != 0 && y % skip != 0) )) {
 
                 g->frame[offset] = pixel;
             }
