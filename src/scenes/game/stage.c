@@ -295,6 +295,7 @@ void stageRefreshNeighborhood(Stage* s,
 void stageCollision(Stage* s, GameObject* obj, int16 steps) {
 
     const int16 RADIUS = 2;
+    const int16 HURT_RADIUS = 10;
     
     int16 x, y;
     int16 sx, sy;
@@ -303,6 +304,7 @@ void stageCollision(Stage* s, GameObject* obj, int16 steps) {
     int16 w = VIEW_WIDTH / 16;
     int16 trx = w*s->roomIndex;
     int16 dx = w*16 / 2;
+    int16 hurtJump = 16 - HURT_RADIUS;
 
     // Start position
     // TODO: Pass center point?
@@ -333,33 +335,41 @@ void stageCollision(Stage* s, GameObject* obj, int16 steps) {
                 continue;
             colID -= 128;
 
-            // Check collisions
-            // TODO: Check tiles from a list etc?
-            // 1) Floor
-            if(colID == 1 || colID == 5 || colID == 7 || colID == 8 ||
-               colID == 11 || colID == 12 || colID == 14 || colID == 15 ) {
+            // Hurt collision
+            if(colID == 16) {
 
-                gobjFloorCollision(obj, x*16-dx, y*16, 16, steps);
+                gobjHurtCollision(obj, x*16-dx+hurtJump, y*16+hurtJump, 
+                    HURT_RADIUS, HURT_RADIUS);
             }
-            // 2) Wall, right
-            if(colID == 4 || colID == 6 || colID == 7 || colID == 10 ||
-               colID == 11 || colID == 13 || colID == 14 || colID == 15 ) {
+            else {
 
-                gobjWallCollision(obj, x*16-dx, y*16, 16, 1, steps);
+                // Check collisions
+                // TODO: Check tiles from a list etc?
+                // 1) Floor
+                if(colID == 1 || colID == 5 || colID == 7 || colID == 8 ||
+                colID == 11 || colID == 12 || colID == 14 || colID == 15 ) {
+
+                    gobjFloorCollision(obj, x*16-dx, y*16, 16, steps);
+                }
+                // 2) Wall, right
+                if(colID == 4 || colID == 6 || colID == 7 || colID == 10 ||
+                colID == 11 || colID == 13 || colID == 14 || colID == 15 ) {
+
+                    gobjWallCollision(obj, x*16-dx, y*16, 16, 1, steps);
+                }
+                // 3) Wall, left
+                if(colID == 2 || colID == 6 || colID == 8 || colID == 9 ||
+                colID == 11 || colID == 12 || colID == 13 || colID == 15 ) {
+
+                    gobjWallCollision(obj, (x+1)*16-dx, y*16, 16, -1, steps);
+                }
+                // 4) Ceiling
+                if(colID == 3 || colID == 5 || colID == 9 || colID == 10 ||
+                colID == 12 || colID == 13 || colID == 14 || colID == 15 ) {
+
+                    gobjCeilingCollision(obj, x*16-dx, (y+1)*16, 16, steps);
+                }
             }
-            // 3) Wall, left
-            if(colID == 2 || colID == 6 || colID == 8 || colID == 9 ||
-               colID == 11 || colID == 12 || colID == 13 || colID == 15 ) {
-
-                gobjWallCollision(obj, (x+1)*16-dx, y*16, 16, -1, steps);
-            }
-            // 4) Ceiling
-            if(colID == 3 || colID == 5 || colID == 9 || colID == 10 ||
-               colID == 12 || colID == 13 || colID == 14 || colID == 15 ) {
-
-                gobjCeilingCollision(obj, x*16-dx, (y+1)*16, 16, steps);
-            }
-
         }
 
         if(y >= s->tmap->height)

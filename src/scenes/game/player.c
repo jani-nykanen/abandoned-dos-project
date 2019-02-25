@@ -94,6 +94,10 @@ static void plDie(Player* pl) {
         // ...
     }
 }
+// Die callback
+static void _dieCB(void* gobj) {
+    plDie((Player*)gobj);
+}
 
 
 // Move
@@ -193,6 +197,9 @@ Player plCreate(int16 x, int16 y) {
     // Collision box
     pl.width = 4;
     pl.height = 16;
+
+    // Set callbacks
+    pl.hurtCB = _dieCB;
 
     // Create sprite
     pl.spr = createSprite(16, 24);

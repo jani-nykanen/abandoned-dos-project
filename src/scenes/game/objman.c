@@ -54,11 +54,14 @@ void objmanUpdate(ObjectManager* objm, EventManager* evMan, Stage* s,
 
     // Update player
     plUpdate(&objm->player, evMan, steps);
-    plStageCollision(&objm->player, (void*)s, (void*)objm, steps);
 
     // Refresh player neighborhood
     stageRefreshNeighborhood(s, (GameObject*)&objm->player,
         PL_W, PL_H);
+
+    plStageCollision(&objm->player, (void*)s, (void*)objm, steps);
+
+    
 
 }
 

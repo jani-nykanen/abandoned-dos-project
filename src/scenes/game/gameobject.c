@@ -3,6 +3,8 @@
 
 #include "gameobject.h"
 
+#include <stdlib.h>
+
 
 // Floor collision
 bool gobjFloorCollision(GameObject* gobj, 
@@ -106,6 +108,26 @@ bool gobjCeilingCollision(GameObject* gobj,
         }
     }
     
+    return false;
+}
+
+
+// Hurt collision
+bool gobjHurtCollision(GameObject* gobj, 
+    int16 x, int16 y, int16 w, int16 h) {
+
+    int16 px = gobj->pos.x / FIXED_PREC;
+    int16 py = gobj->pos.y / FIXED_PREC;
+
+    if(gobj->hurtCB == NULL) return false;
+
+    // Check if inside the collision area
+    if(px + gobj->width/2 >= x && px - gobj->width/2 <= x+w
+    && py >= y && py-gobj->height <= y+h) {
+
+        gobj->hurtCB((void*)gobj);
+        return true;
+    }
     return false;
 }
 

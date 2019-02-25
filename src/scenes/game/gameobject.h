@@ -14,7 +14,8 @@
     Vector2 target; \
     int16 width; \
     int16 height; \
-    bool canJump; 
+    bool canJump; \
+    void (*hurtCB) (void*);
 
 // Base game object type
 typedef struct {
@@ -36,6 +37,10 @@ bool gobjWallCollision(GameObject* gobj,
 // Ceiling collision
 bool gobjCeilingCollision(GameObject* gobj, 
     int16 x, int16 y, int16 w, int16 steps);
+
+// Hurt collision
+bool gobjHurtCollision(GameObject* gobj, 
+    int16 x, int16 y, int16 w, int16 h);
 
 // Update axis
 void gobjUpdateAxis(int16* axis, int16* speed, int16 target, 
