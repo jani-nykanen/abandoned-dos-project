@@ -35,7 +35,7 @@ void objmanUpdate(ObjectManager* objm,
     int16 steps);
 
 // Draw objects
-void objmanDraw(ObjectManager* objm, Graphics* g);
+void objmanDraw(ObjectManager* objm, Stage* s, Graphics* g);
 
 // Add a gem
 void objmanAddGem(ObjectManager* objm, int16 x, int16 y);

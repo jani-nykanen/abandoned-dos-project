@@ -43,6 +43,7 @@ static void gameDrawInfo(Graphics* g) {
 
     char gemStr [PL_GEM_MAX +1];
     char lifeStr [PL_LIFE_MAX +1];
+    char stageString [3+1];
     int16 i;
 
     if(!refreshInfo) return;
@@ -62,6 +63,10 @@ static void gameDrawInfo(Graphics* g) {
     }
     lifeStr[i] = '\0';
 
+    // Determine stage string
+    snprintf(stageString, 4, "1-%d", stage->roomIndex+1);
+    stageString[3] = '\0';
+
     // Draw lives
     gDrawTextFast(g, bmpFont, "LIVES", LIVES_X, TEXT_Y, 0, 0, true);
     gDrawTextFast(g, bmpFont, lifeStr, LIVES_X, TEXT_Y+YOFF, 2, 0, true);
@@ -72,7 +77,7 @@ static void gameDrawInfo(Graphics* g) {
 
     // Draw stage
     gDrawTextFast(g, bmpFont, "STAGE", STAGE_X, TEXT_Y, 0, 0, true);
-    gDrawTextFast(g, bmpFont, "1-1", STAGE_X, TEXT_Y+YOFF, 0, 0, true);
+    gDrawTextFast(g, bmpFont, stageString, STAGE_X, TEXT_Y+YOFF, 0, 0, true);
 
 }
 
@@ -176,10 +181,11 @@ static void gameDraw(Graphics* g) {
 
     // Draw stage
     gTranslate(g, 8, 8);
-    stageDraw(stage, g);
 
+    // Draw static stage
+    stageDraw(stage, g);
     // Draw objects
-    objmanDraw(&objm, g);
+    objmanDraw(&objm, stage, g);
 }
 
 

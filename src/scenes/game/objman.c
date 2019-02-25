@@ -37,6 +37,14 @@ void objmanUpdate(ObjectManager* objm, EventManager* evMan, Stage* s,
 
     int16 i;
 
+    // If stage transiting, update only
+    // the player
+    if(s->transiting) {
+
+        plTransition(&objm->player, TRANS_SPEED, steps);
+        return;
+    }
+
     // Update gems
     for(i = 0; i < objm->gemCount; ++ i) {
 
@@ -56,7 +64,7 @@ void objmanUpdate(ObjectManager* objm, EventManager* evMan, Stage* s,
 
 
 // Draw objects
-void objmanDraw(ObjectManager* objm, Graphics* g) {
+void objmanDraw(ObjectManager* objm, Stage* s, Graphics* g) {
 
     int16 i;
 
@@ -64,10 +72,13 @@ void objmanDraw(ObjectManager* objm, Graphics* g) {
     // (with precision 128 we cannot go too high)
     gMove(g, 304/2, 0);
 
-    // Draw gems
-    for(i = 0; i < objm->gemCount; ++ i) {
+    if(!s->transiting) {
 
-        gemDraw(&objm->gems[i], g);
+        // Draw gems
+        for(i = 0; i < objm->gemCount; ++ i) {
+
+            gemDraw(&objm->gems[i], g);
+        }
     }
 
     // Draw player

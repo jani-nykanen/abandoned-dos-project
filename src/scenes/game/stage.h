@@ -11,6 +11,9 @@
 
 #include <stdbool.h>
 
+// Transition speed
+#define TRANS_SPEED 4
+
 // Stage type
 typedef struct {
 
@@ -31,6 +34,10 @@ typedef struct {
 
     // Room index
     int16 roomIndex;
+    // Is transiting
+    bool transiting;
+    // Transition timer
+    int16 transTimer;
 
     // Whether force redraw
     bool forceRedraw;
@@ -48,6 +55,9 @@ void stageUpdate(Stage* s, int16 steps);
 // Draw stage
 void stageDraw(Stage* s, Graphics* g);
 
+// Draw stage transition
+void stageDrawTransition(Stage* s, Graphics* g);
+
 // Refresh neighborhood to determine redrawable
 // tiles
 void stageRefreshNeighborhood(Stage* s, 
@@ -61,6 +71,9 @@ void stageParseObjects(Stage* s, void* oman);
 
 // Force redraw
 void stageForceRedraw(Stage* s);
+
+// Set transition
+void stageSetTransition(Stage* s);
 
 // Destroy stage
 void destroyStage(Stage* s);

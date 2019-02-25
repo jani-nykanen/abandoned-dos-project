@@ -51,6 +51,10 @@ Player plCreate(int16 x, int16 y);
 // Update player
 void plUpdate(Player* pl, EventManager* evMan, int16 steps);
 
+// Update player transition when the stage
+// is transiting
+void plTransition(Player* pl, int16 speed, int16 steps);
+
 // Draw player
 void plDraw(Player* pl, Graphics* g);
 
@@ -59,5 +63,8 @@ void plStageCollision(Player* pl, void* s, void* objm, int16 steps);
 
 // Add a gem
 void plAddGem(Player* pl);
+
+// Set a new starting position
+void plSetStartPos(Player* pl, int16 x, int16 y);
 
 #endif // __PLAYER__

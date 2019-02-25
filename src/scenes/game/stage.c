@@ -92,6 +92,8 @@ Stage* createStage(uint8 index, Bitmap* bmpTileset) {
     s->waveTimer = 0;
     s->roomIndex = 0;
     s->forceRedraw = false;
+    s->transiting = false;
+    s->transTimer = 0;
 
     return s;
 }
@@ -103,15 +105,35 @@ void stageUpdate(Stage* s, int16 steps) {
     const int16 WATER_SPEED = 16;
     const int16 WAVE_SPEED = 3;
 
-    // Update water
-    s->waterPos += WATER_SPEED* steps;
-    if(s->waterPos >= 16*FIXED_PREC)
-        s->waterPos -= 16*FIXED_PREC;
+    // Update transition
+    if(s->transiting) {
 
-    // Update waves
-    s->waveTimer += WAVE_SPEED * steps;
-    if(s->waveTimer >= 360)
-        s->waveTimer -= 360;
+        s->transTimer += TRANS_SPEED * steps;
+        if(s->transTimer >= VIEW_WIDTH) {
+
+            s->transTimer = 0;
+            s->transiting = false;
+            stageForceRedraw(s);
+
+            // Next room
+            ++ s->roomIndex;
+
+            // Redraw info
+            gameRefreshInfo();
+        }
+    }
+    else {
+
+        // Update water
+        s->waterPos += WATER_SPEED* steps;
+        if(s->waterPos >= 16*FIXED_PREC)
+            s->waterPos -= 16*FIXED_PREC;
+
+        // Update waves
+        s->waveTimer += WAVE_SPEED * steps;
+        if(s->waveTimer >= 360)
+            s->waveTimer -= 360;
+    }
 }
 
 
@@ -126,6 +148,14 @@ void stageDraw(Stage* s, Graphics* g) {
     int16 w = VIEW_WIDTH / 16;
     int16 trx = w*s->roomIndex;
     uint8 t;
+
+    // We use different rendering method for
+    // a transiting stage
+    if(s->transiting) {
+
+        stageDrawTransition(s, g);
+        return;
+    }
 
     // Disable clipping for waster rendering
     gToggleClipping(g, false);
@@ -172,6 +202,49 @@ void stageDraw(Stage* s, Graphics* g) {
 
     // Reset clipping
     gToggleClipping(g, true);
+}
+
+
+// Draw stage transition
+void stageDrawTransition(Stage* s, Graphics* g) {
+
+    int16 x, y;
+    int16 sx, sy;
+    int16 w = VIEW_WIDTH / 16;
+    int16 trx = w*s->roomIndex + s->transTimer;
+    uint8 t;
+
+    int16 startx = s->roomIndex*w + (s->transTimer/16);
+    int16 endx = startx + w + 1;
+
+    // Toggle clipping
+    gToggleClipping(g, true);
+
+    // Draw tiles
+    for(y = 0; y < s->tmap->height; ++ y) {
+
+        for(x = startx; x < endx; ++ x) {
+
+            // Get tile
+            t = mapGetTile(s->tmap, 0, x, y);
+
+            // Check if we want to draw a tile or background
+            if(t == 0) {
+
+                gFillRect(g, x*16-trx, y*16, 16, 16, 219);
+                continue;
+            }
+            -- t;
+
+            // Draw tile
+            sx = t % 16;
+            sx *= 16;
+            sy = t / 16;
+            sy *= 16;
+            gDrawBitmapRegionFast(g, s->bmpTileset, 
+                sx, sy, 16, 16, x*16-trx, y*16);
+        }
+    }
 }
 
 
@@ -319,7 +392,15 @@ void stageParseObjects(Stage* s, void* p) {
             {
                 // Player
                 case 0:
-                    oman->player = plCreate((x+1)*16-dx, (y+1)*16);
+
+                    if(s->roomIndex == 0)
+                        oman->player = plCreate((x+1)*16-dx, (y+1)*16);
+
+                    else {
+
+                        plSetStartPos(&oman->player, (x+1)*16-dx, (y+1)*16);
+                    }
+
                     break;
 
                 // Gem
@@ -340,6 +421,14 @@ void stageParseObjects(Stage* s, void* p) {
 void stageForceRedraw(Stage* s) {
 
     s->forceRedraw = true;
+}
+
+
+// Set transition
+void stageSetTransition(Stage* s) {
+
+    s->transiting = true;
+    s->transTimer = 0;
 }
 
 

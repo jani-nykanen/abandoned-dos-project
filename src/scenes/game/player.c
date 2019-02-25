@@ -126,7 +126,7 @@ static void plAnimate(Player* pl, EventManager* evMan, int16 steps) {
 
     const int16 JUMP_HEIGHT[] = {
         0, 0, -192, 0,
-        -240, 0, 0, -336
+        -256, 0, 0, -336
     };
     const int16 SPEED_MOD[] = {
         0, 0, 12, 0,
@@ -215,6 +215,18 @@ void plUpdate(Player* pl, EventManager* evMan, int16 steps) {
 }
 
 
+// Update player transition when the stage
+// is transiting
+void plTransition(Player* pl, int16 speed, int16 steps) {
+
+    pl->pos.x -= speed * steps * FIXED_PREC;
+    if(pl->pos.x/FIXED_PREC < -VIEW_WIDTH/2 + pl->spr.width/2) {
+
+        pl->pos.x = (-VIEW_WIDTH/2 + pl->spr.width/2) * FIXED_PREC;     
+    }
+}
+
+
 // Draw player
 void plDraw(Player* pl, Graphics* g) {
 
@@ -242,8 +254,7 @@ void plStageCollision(Player* pl, void* _s, void* _objm, int16 steps) {
     // Right-side collision
     if(pl->pos.x/FIXED_PREC+pl->width/2 > VIEW_WIDTH/2) {
 
-        // Transition to the next room
-        ++ s->roomIndex; 
+        ++ s->roomIndex;
 
         // Clear objects
         objmanClearObjects(objm);
@@ -251,13 +262,15 @@ void plStageCollision(Player* pl, void* _s, void* _objm, int16 steps) {
         stageParseObjects(s, objm);
 
         // Move player to the left
-        pl->pos.x -= (VIEW_WIDTH-pl->width/2) * FIXED_PREC;
+        // pl->pos.x -= (VIEW_WIDTH-pl->width/2) * FIXED_PREC;
         // Set speed to zero
         pl->speed.x = 0;
         pl->dir = 1;
 
-        // Redraw the stage
-        stageForceRedraw(s);
+        -- s->roomIndex;
+
+        // Start transition to the next stage
+        stageSetTransition(s);
     }
     
 }
@@ -275,4 +288,12 @@ void plAddGem(Player* pl) {
 
     // Refresh info
     gameRefreshInfo();
+}
+
+
+// Set a new starting position
+void plSetStartPos(Player* pl, int16 x, int16 y) {
+
+    pl->startPos.x = x * FIXED_PREC;
+    pl->startPos.y = y * FIXED_PREC;
 }
