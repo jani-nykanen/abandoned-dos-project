@@ -138,8 +138,7 @@ static void plMove(Player* pl, int16 steps) {
 
     const int16 ACC = FIXED_PREC / 32;
     const int16 GRAVITY = FIXED_PREC / 16;
-    const int16 HEIGHT = 24;
-
+    
     int16 grav = pl->onWater ? (GRAVITY/2) : GRAVITY;
 
     // Update axes
@@ -151,12 +150,6 @@ static void plMove(Player* pl, int16 steps) {
     // Determine direction
     if(pl->target.x != 0)
         pl->dir = pl->target.x < 0 ? -1 : 1;
-
-    // Outside the room boundary, die
-    if(pl->pos.y/FIXED_PREC - HEIGHT > VIEW_HEIGHT) {
-
-        plDie(pl);
-    }
 }
 
 
@@ -377,6 +370,11 @@ void plStageCollision(Player* pl, void* _s, void* _objm, int16 steps) {
         stageSetTransition(s);
     }
     
+    // Outside the room boundary, die
+    if(pl->pos.y/FIXED_PREC - pl->spr.height > VIEW_HEIGHT) {
+
+        plDie(pl);
+    }
 }
 
 
