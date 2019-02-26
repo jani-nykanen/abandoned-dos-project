@@ -14,6 +14,8 @@
 // Constants
 static const int16 DEATH_INTERVAL = 2;
 static const int16 DEATH_MAX = 8;
+static const int16 GRAVITY_TARGET = 2 * FIXED_PREC;
+static const int16 WATER_DIV = 3;
 
 // Bitmaps
 static Bitmap* bmpRat;
@@ -40,11 +42,12 @@ static void plComputeHorizontalTarget(Player* pl, EventManager* evMan) {
 // Control
 static void plControl(Player* pl, EventManager* evMan, int16 steps) {
 
-    const int16 GRAVITY_TARGET = 2 * FIXED_PREC;
     const int16 DELTA = FIXED_PREC / 4;
 
     Vpad* vpad = evMan->vpad;
     uint16 targetFrame;
+    int16 gravTarget = pl->onWater ? 
+        (GRAVITY_TARGET/WATER_DIV) : GRAVITY_TARGET;
 
     // Set horizontal target
     if(pl->canJump) {
@@ -72,7 +75,7 @@ static void plControl(Player* pl, EventManager* evMan, int16 steps) {
     }
 
     // Set gravity
-    pl->target.y = GRAVITY_TARGET;
+    pl->target.y = gravTarget;
 }
 
 
@@ -115,6 +118,21 @@ static void _dieCB(void* gobj) {
 }
 
 
+// Water callback
+static void _waterCB(void* gobj) {
+
+    Player* pl = (Player*)gobj;
+
+    pl->onWater = true;
+
+    // Reduce speed
+    if(pl->speed.y > GRAVITY_TARGET/WATER_DIV) {
+
+        pl->speed.y = (GRAVITY_TARGET/WATER_DIV) ;
+    }
+}
+
+
 // Move
 static void plMove(Player* pl, int16 steps) {
 
@@ -122,11 +140,13 @@ static void plMove(Player* pl, int16 steps) {
     const int16 GRAVITY = FIXED_PREC / 16;
     const int16 HEIGHT = 24;
 
+    int16 grav = pl->onWater ? (GRAVITY/2) : GRAVITY;
+
     // Update axes
     gobjUpdateAxis(&pl->pos.x, &pl->speed.x,
         pl->target.x, ACC, steps);
     gobjUpdateAxis(&pl->pos.y, &pl->speed.y,
-        pl->target.y, GRAVITY, steps);   
+        pl->target.y, grav, steps);   
 
     // Determine direction
     if(pl->target.x != 0)
@@ -231,6 +251,7 @@ Player plCreate(int16 x, int16 y) {
     pl.dying = false;
     pl.deathTimer = DEATH_INTERVAL * DEATH_MAX;
     pl.respawning = true;
+    pl.onWater = false;
 
     // Default lives & gems
     pl.lives = PL_LIFE_MAX -2;
@@ -242,6 +263,7 @@ Player plCreate(int16 x, int16 y) {
 
     // Set callbacks
     pl.hurtCB = _dieCB;
+    pl.waterCB = _waterCB;
 
     // Create sprite
     pl.spr = createSprite(16, 24);
@@ -274,6 +296,7 @@ void plUpdate(Player* pl, EventManager* evMan, int16 steps) {
     plAnimate(pl, evMan, steps);
 
     pl->canJump = false;
+    pl->onWater = false;
 }
 
 

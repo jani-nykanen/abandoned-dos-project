@@ -15,7 +15,7 @@
 
 
 // Draw water tile
-static void stageDrawWater(Stage* s, Graphics* g, int16 x, int16 y) {
+static void stageDrawWater(Stage* s, Graphics* g, int16 tx, int16 ty, int16 x, int16 y) {
 
     const int16 AMPLITUDE = 2;
 
@@ -34,10 +34,10 @@ static void stageDrawWater(Stage* s, Graphics* g, int16 x, int16 y) {
 
     // "Left"
     gDrawBitmapRegionFast(g, s->bmpTileset, 
-        7*16 + sx1, 0, sw1, sh, x, y+sy);
+        tx*16 + sx1, ty*16, sw1, sh, x, y+sy);
     // "Right" aka remainder
     gDrawBitmapRegionFast(g, s->bmpTileset, 
-        7*16 + sx2, 0, sw2, sh, x + sw1, y+sy);
+        tx*16 + sx2, ty*16, sw2, sh, x + sw1, y+sy);
 }
 
 
@@ -140,9 +140,6 @@ void stageUpdate(Stage* s, int16 steps) {
 // Draw stage
 void stageDraw(Stage* s, Graphics* g) {
 
-    // TODO: Check from the collision?
-    const int16 WATER_TILE = 8;
-
     int16 x, y;
     int16 sx, sy;
     int16 w = VIEW_WIDTH / 16;
@@ -169,9 +166,11 @@ void stageDraw(Stage* s, Graphics* g) {
             t = mapGetTile(s->tmap, 0, trx+x, y);
 
             // If water, use own routine
-            if(t == WATER_TILE) {
+            if(t > 0 && mapGetTile(s->tmap, 1, trx+x, y) == 129+16) {
 
-                stageDrawWater(s, g, x*16, y*16);
+                stageDrawWater(s, g, 
+                    (t-1) % 16, (t-1) / 16,
+                    x*16, y*16);
                 continue;
             }
 
@@ -296,6 +295,7 @@ void stageCollision(Stage* s, GameObject* obj, int16 steps) {
 
     const int16 RADIUS = 2;
     const int16 HURT_RADIUS = 10;
+    const int16 WATER_OFF = 4;
     
     int16 x, y;
     int16 sx, sy;
@@ -340,6 +340,13 @@ void stageCollision(Stage* s, GameObject* obj, int16 steps) {
 
                 gobjHurtCollision(obj, x*16-dx+hurtJump, y*16+hurtJump, 
                     HURT_RADIUS, HURT_RADIUS);
+            }
+            // Water collision
+            else if(colID == 17 || colID == 18) {
+
+                gobjWaterCollision(obj, 
+                    x*16-dx, y*16 + WATER_OFF, 
+                    16, 16-WATER_OFF);
             }
             else {
 

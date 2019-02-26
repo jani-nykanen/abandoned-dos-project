@@ -6,6 +6,27 @@
 #include <stdlib.h>
 
 
+// Generic special collision
+static bool genericSpcCollision(GameObject* gobj, 
+    int16 x, int16 y, int16 w, int16 h,
+    void (*func) (void*)) {
+
+    int16 px = gobj->pos.x / FIXED_PREC;
+    int16 py = gobj->pos.y / FIXED_PREC;
+
+    if(gobj->dying || func == NULL) return false;
+
+    // Check if inside the collision area
+    if(px + gobj->width/2 >= x && px - gobj->width/2 <= x+w
+    && py >= y && py-gobj->height <= y+h) {
+
+        func((void*)gobj);
+        return true;
+    }
+    return false;
+}
+
+
 // Floor collision
 bool gobjFloorCollision(GameObject* gobj, 
     int16 x, int16 y, int16 w, int16 steps) {
@@ -116,19 +137,17 @@ bool gobjCeilingCollision(GameObject* gobj,
 bool gobjHurtCollision(GameObject* gobj, 
     int16 x, int16 y, int16 w, int16 h) {
 
-    int16 px = gobj->pos.x / FIXED_PREC;
-    int16 py = gobj->pos.y / FIXED_PREC;
+    return genericSpcCollision(gobj, x, y, w, h,
+        gobj->hurtCB);
+}
 
-    if(gobj->dying || gobj->hurtCB == NULL) return false;
 
-    // Check if inside the collision area
-    if(px + gobj->width/2 >= x && px - gobj->width/2 <= x+w
-    && py >= y && py-gobj->height <= y+h) {
+// Water collision
+bool gobjWaterCollision(GameObject* gobj, 
+    int16 x, int16 y, int16 w, int16 h) {
 
-        gobj->hurtCB((void*)gobj);
-        return true;
-    }
-    return false;
+    return genericSpcCollision(gobj, x, y, w, h,
+        gobj->waterCB);
 }
 
 

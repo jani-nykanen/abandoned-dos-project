@@ -45,6 +45,8 @@ typedef struct {
 
     // Is respawning
     bool respawning;
+    // Is on water
+    bool onWater;
     
 } Player;
 

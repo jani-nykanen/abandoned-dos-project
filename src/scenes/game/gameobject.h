@@ -16,6 +16,7 @@
     int16 height; \
     bool canJump; \
     void (*hurtCB) (void*); \
+    void (*waterCB) (void*); \
     bool dying; \
     int16 deathTimer;
 
@@ -42,6 +43,10 @@ bool gobjCeilingCollision(GameObject* gobj,
 
 // Hurt collision
 bool gobjHurtCollision(GameObject* gobj, 
+    int16 x, int16 y, int16 w, int16 h);
+
+// Water collision
+bool gobjWaterCollision(GameObject* gobj, 
     int16 x, int16 y, int16 w, int16 h);
 
 // Update axis
