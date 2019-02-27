@@ -117,7 +117,8 @@ static int16 gameInit() {
     cond = rsAddBitmap(res, "ASSETS/BITMAPS/FONT.BIN", "font")
         && rsAddBitmap(res, "ASSETS/BITMAPS/RAT.BIN", "rat")
         && rsAddBitmap(res, "ASSETS/BITMAPS/TILESET.BIN", "tileset")
-        && rsAddBitmap(res, "ASSETS/BITMAPS/GEM.BIN", "gem");
+        && rsAddBitmap(res, "ASSETS/BITMAPS/GEM.BIN", "gem")
+        && rsAddBitmap(res, "ASSETS/BITMAPS/ENEMY.BIN", "enemy");
     if(!cond) {
 
         return 1;

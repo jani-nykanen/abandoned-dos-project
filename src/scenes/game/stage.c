@@ -258,9 +258,16 @@ void stageRefreshNeighborhood(Stage* s,
     int16 dx = VIEW_WIDTH/ 2;
     int16 sw = VIEW_WIDTH / 16;
 
+    int16 px = dx + obj->pos.x/FIXED_PREC;
+
     // Start position
     // TODO: Pass center point?
-    sx = (dx + obj->pos.x/FIXED_PREC) / 16 - w;
+    sx = px / 16;
+    if(sx*16 <= px) {
+
+        sx -= w/2;
+    }
+    
     if(sx < 0) sx = 0;
     sy = (obj->pos.y/FIXED_PREC -8) / 16 - h;
     if(sy < 0) sy = 0;
@@ -270,8 +277,8 @@ void stageRefreshNeighborhood(Stage* s,
         return;
 
     // End position
-    ex = sx + w*2;
-    ey = sy + h*2;
+    ex = sx + w;
+    ey = sy + h +1;
 
     for(y = sy; y <= ey; ++ y) {
 

@@ -32,7 +32,7 @@ ObjectManager objmanCreate(Stage* s) {
 void objmanUpdate(ObjectManager* objm, EventManager* evMan, Stage* s,
     int16 steps) {
 
-    const int16 PL_W = 1;
+    const int16 PL_W = 2;
     const int16 PL_H = 2;
 
     int16 i;

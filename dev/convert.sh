@@ -6,6 +6,8 @@ cd "$(dirname "$0")"
 ../tools/png2bin bitmaps/tileset.png ../ASSETS/BITMAPS/TILESET.BIN
 ../tools/png2bin bitmaps/rat.png ../ASSETS/BITMAPS/RAT.BIN
 ../tools/png2bin bitmaps/gem.png ../ASSETS/BITMAPS/GEM.BIN
+../tools/png2bin bitmaps/enemies.png ../ASSETS/BITMAPS/ENEMY.BIN
+
 
 # Maps
 ../tools/tmx2bin ./maps/1.tmx ../ASSETS/MAPS/1.BIN
