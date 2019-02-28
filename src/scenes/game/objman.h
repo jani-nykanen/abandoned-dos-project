@@ -7,8 +7,10 @@
 #include "player.h"
 #include "stage.h"
 #include "gem.h"
+#include "enemy.h"
 
-#define GEM_MAX 16
+#define GEM_MAX 4
+#define ENEMY_MAX 6
 
 // Initialize global content
 void objmanInit(ResourceList* res);
@@ -19,9 +21,11 @@ typedef struct {
     // Components
     Player player;
     Gem gems [GEM_MAX];
+    Enemy enemies [ENEMY_MAX];
 
     // Objects counts
-    int16 gemCount;
+    uint8 gemCount;
+    uint8 enemyCount;
 
 
 } ObjectManager;
@@ -39,6 +43,9 @@ void objmanDraw(ObjectManager* objm, Stage* s, Graphics* g);
 
 // Add a gem
 void objmanAddGem(ObjectManager* objm, int16 x, int16 y);
+
+// Add an enemy
+void objmanAddEnemy(ObjectManager* objm, int16 x, int16 y, uint8 id);
 
 // Clear objects (excluding player)
 void objmanClearObjects(ObjectManager* objm);

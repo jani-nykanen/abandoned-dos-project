@@ -391,6 +391,56 @@ void stageCollision(Stage* s, GameObject* obj, int16 steps) {
 }
 
 
+// Enemy collision
+void stageEnemyCollision(Stage* s, void* enemy) {
+
+    const int16 RADIUS = 1;
+
+    Enemy* e = (Enemy*)enemy;
+
+    int16 x, y;
+    int16 sx, sy;
+    int16 ex, ey;
+    int16 w = VIEW_WIDTH / 16;
+    int16 trx = w*s->roomIndex;
+    int16 dx = w*16 / 2;
+
+    // Start position
+    // TODO: Pass center point?
+    sx = (dx + e->pos.x/FIXED_PREC) / 16 - RADIUS;
+    if(sx < 0) sx = 0;
+    sy = (e->pos.y/FIXED_PREC -8) / 16 - RADIUS;
+    if(sy < 0) sy = 0;
+
+    // Out of range
+    if(sx >= s->tmap->width || sy >= s->tmap->height)
+        return;
+
+    // End position
+    ex = sx + RADIUS*2 +1;
+    ey = sy + RADIUS*2 +1;
+
+    // Go through tiles
+    for(y = sy; y <= ey; ++ y) {
+
+        for(x = sx; x <= ex; ++ x) {
+
+            if(x >= s->tmap->width)
+                break;
+
+            // Get collision tile
+            if(mapGetTile(s->tmap, 2, trx+x, y) == 128 + 19) {
+
+                enemyBlockCollision(e, x*16 - dx, y*16, 16, 16);
+            }
+        }
+
+        if(y >= s->tmap->height)
+            break;
+    }
+}
+
+
 // Parse objects
 void stageParseObjects(Stage* s, void* p) {
 
@@ -429,6 +479,13 @@ void stageParseObjects(Stage* s, void* p) {
                 // Gem
                 case 1:
                     objmanAddGem(oman, x*16 - dx, y*16);
+                    break;
+
+                // Enemy
+                case 16:
+                case 17:
+
+                    objmanAddEnemy(oman, x, y, tileID-16);
                     break;
             
                 default:

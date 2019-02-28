@@ -10,6 +10,7 @@ void objmanInit(ResourceList* res) {
     // Initialize all the components
     plInit(res);
     initGem(res);
+    initEnemy(res);
 }
 
 
@@ -20,6 +21,7 @@ ObjectManager objmanCreate(Stage* s) {
 
     // Set defaults
     objm.gemCount = 0;
+    objm.enemyCount = 0;
 
     // Parse objects from the tilemap
     stageParseObjects(s, &objm);
@@ -52,6 +54,12 @@ void objmanUpdate(ObjectManager* objm, EventManager* evMan, Stage* s,
         gemPlayerCollision(&objm->gems[i], &objm->player);
     }
 
+    // Update enemies
+    for(i = 0; i < objm->enemyCount; ++ i) {
+
+        enemyUpdate(&objm->enemies[i], &objm->player, steps);
+    }
+
     // Update player
     plUpdate(&objm->player, evMan, steps);
 
@@ -60,8 +68,6 @@ void objmanUpdate(ObjectManager* objm, EventManager* evMan, Stage* s,
         PL_W, PL_H);
 
     plStageCollision(&objm->player, (void*)s, (void*)objm, steps);
-
-    
 
 }
 
@@ -82,6 +88,13 @@ void objmanDraw(ObjectManager* objm, Stage* s, Graphics* g) {
 
             gemDraw(&objm->gems[i], g);
         }
+
+        // Draw enemies
+        for(i = 0; i < objm->enemyCount; ++ i) {
+
+            enemyDraw(&objm->enemies[i], g);
+            enemyStageCollision(&objm->enemies[i], s);
+        }
     }
 
     // Draw player
@@ -99,8 +112,19 @@ void objmanAddGem(ObjectManager* objm, int16 x, int16 y) {
 }
 
 
+// Add an enemy
+void objmanAddEnemy(ObjectManager* objm, int16 x, int16 y, uint8 id) {
+
+    if(objm->enemyCount == ENEMY_MAX)
+        return;
+
+    objm->enemies[objm->enemyCount ++] = createEnemy(x, y, id);
+}
+
+
 // Clear objects (excluding player)
 void objmanClearObjects(ObjectManager* objm) {
 
     objm->gemCount = 0;
+    objm->enemyCount = 0;
 }

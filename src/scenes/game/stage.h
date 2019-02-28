@@ -66,6 +66,9 @@ void stageRefreshNeighborhood(Stage* s,
 // Object collision
 void stageCollision(Stage* s, GameObject* gobj, int16 steps);
 
+// Enemy collision
+void stageEnemyCollision(Stage* s, void* enemy);
+
 // Parse objects
 void stageParseObjects(Stage* s, void* oman);
 
