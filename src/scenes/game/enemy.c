@@ -69,16 +69,19 @@ static void enemyPlayerCollision(Enemy* e, Player* pl, int16 steps) {
     const int16 HURT_AREA_BOTTOM = 4;
     const int16 PL_JUMP_HEIGHT_BASE = -192;
     const int16 PL_HEIGHT_MUL = -48;
-    const int16 HURT_AREA_OFFSET = 4;
+    const int16 HURT_AREA_OFFSET = 2;
 
-    int16 ex = e->pos.x/FIXED_PREC - e->width;
+    int16 ex = e->pos.x/FIXED_PREC - e->width/2;
     int16 ey = e->pos.y/FIXED_PREC - e->height;
 
     int16 px = pl->pos.x/FIXED_PREC - pl->width/2;
     int16 py = pl->pos.y/FIXED_PREC;
 
+    // No collision with a death playre
+    if(pl->dying) return;
+
     if(pl->speed.y >= 0 && 
-        px+pl->width/2 >= ex && px-pl->width/2 <= ex+e->width && 
+        px+pl->width >= ex && px <= ex+e->width && 
         py >= ey-HURT_AREA_TOP*steps &&
         py <= ey + (HURT_AREA_BOTTOM + pl->speed.y/FIXED_PREC)*steps) {
 
