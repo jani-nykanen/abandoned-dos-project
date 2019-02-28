@@ -161,7 +161,7 @@ static void plAnimate(Player* pl, EventManager* evMan, int16 steps) {
 
     const int16 JUMP_HEIGHT[] = {
         0, 0, -192, 0,
-        -256, 0, 0, -336
+        -264, 0, 0, -336
     };
     const int16 SPEED_MOD[] = {
         0, 0, 12, 0,

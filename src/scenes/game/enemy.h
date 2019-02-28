@@ -15,6 +15,7 @@ typedef struct {
 
     // Basic stuff
     Vector2 pos;
+    Vector2 startPos;
     Vector2 speed; 
     Vector2 target; 
 
@@ -33,6 +34,8 @@ typedef struct {
 
     // ID
     uint8 id;
+    // Special timer
+    int16 spcTimer;
 
     // Does exist
     bool exist;

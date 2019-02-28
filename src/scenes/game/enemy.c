@@ -5,6 +5,9 @@
 
 #include "game.h"
 
+#include "../../util/mathext.h"
+
+
 // Constants
 static const int16 DEATH_INTERVAL = 2;
 static const int16 DEATH_MAX = 8;
@@ -25,7 +28,7 @@ void initEnemy(ResourceList* res) {
 static void enemyInitSpecific(Enemy* e, int16 x, int16 y) {
 
     const int16 WALKER_SPEED = FIXED_PREC / 3;
-    const int16 FLY_SPEED = FIXED_PREC / 3;
+    const int16 GHOST_SPEED = FIXED_PREC / 4;
 
     // Default speed to zero
     e->speed.x = 0;
@@ -40,9 +43,9 @@ static void enemyInitSpecific(Enemy* e, int16 x, int16 y) {
             e->pos.y += FIXED_PREC;
             break;
         
-        // Fly
+        // Ghost
         case 1:
-            e->speed.y = FLY_SPEED * (y % 2 == 0 ? 1 : -1);
+            e->speed.y = GHOST_SPEED * (y % 2 == 0 ? 1 : -1);
             break;
     
         default:
@@ -106,6 +109,9 @@ static void enemyPlayerCollision(Enemy* e, Player* pl, int16 steps) {
 // Move
 static void enemyMove(Enemy* e, int16 steps) {
 
+    const int16 PROP_TIMER_SPEED = 2;
+    const int16 PROP_AMPLITUDE = 8;
+
     switch (e->id) {
 
         // "Uniformly" moving objects
@@ -114,6 +120,14 @@ static void enemyMove(Enemy* e, int16 steps) {
         case 2:
             e->pos.x += e->speed.x * steps;
             e->pos.y += e->speed.y * steps;
+            break;
+
+        // Propeller-thing
+        case 3:
+
+            e->spcTimer += PROP_TIMER_SPEED * steps;
+            e->spcTimer %= 360;
+            e->pos.y = e->startPos.y + fixedSin(e->spcTimer) * PROP_AMPLITUDE;
             break;
 
         default:
@@ -126,22 +140,30 @@ static void enemyMove(Enemy* e, int16 steps) {
 static void enemyAnimate(Enemy* e, int16 steps) {
 
     const int WALK_SPEED = 8;
-    const int FLY_SPEED = 8;
+    const int GHOST_SPEED = 10;
+    const int PROPELLER_SPEED = 6;
 
     int16 animSpeed =0;
+    int16 endFrame = 3;
 
     switch (e->id) {
 
-        // Walker & bir
+        // Walker & bird
         case 0:
         case 2:
             animSpeed = WALK_SPEED;
             e->flip = e->speed.x > 0;
             break;
         
-        // Fly
+        // Ghost
         case 1:
-            animSpeed = FLY_SPEED;
+            animSpeed = GHOST_SPEED;
+            endFrame = 2;
+            break;
+
+        // "Propeller"
+        case 3:
+            animSpeed = PROPELLER_SPEED;
             break;
     
         default:
@@ -149,7 +171,7 @@ static void enemyAnimate(Enemy* e, int16 steps) {
     }
 
     // Animate
-    sprAnimate(&e->spr, e->id, 0, 3, animSpeed, steps);
+    sprAnimate(&e->spr, e->id, 0, endFrame, animSpeed, steps);
 }
 
 
@@ -159,6 +181,7 @@ Enemy createEnemy(int16 x, int16 y, uint8 id) {
     Enemy e;
     e.pos = vec2((x*16+8 - VIEW_WIDTH/2) * FIXED_PREC,
         (y+1)*16 * FIXED_PREC);
+    e.startPos = e.pos;
 
     e.id = id;
 
@@ -169,6 +192,7 @@ Enemy createEnemy(int16 x, int16 y, uint8 id) {
     e.dying = false;
     e.deathTimer = 0;
     e.flip = false;
+    e.spcTimer = 0;
 
     // Create sprite
     e.spr = createSprite(16, 16);
