@@ -37,6 +37,9 @@ typedef struct {
 
     // Speed modificator
     int16 speedMod;
+    // Height modifier, needed for
+    // enemy collision
+    int16 heightMod;
 
     // Lives
     int16 lives;

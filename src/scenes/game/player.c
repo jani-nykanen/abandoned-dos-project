@@ -64,10 +64,13 @@ static void plControl(Player* pl, EventManager* evMan, int16 steps) {
     if(extAbs(vpad->stick.y) > DELTA) {
 
         targetFrame = vpad->stick.y > 0 ? 2 : 7;
+        pl->heightMod = vpad->stick.y > 0 ? 0 : 2;
+    
     }
     else {
         
         targetFrame = 4;
+        pl->heightMod = 1;
     }
     if(!pl->canJump || targetFrame > pl->spr.frame) {
 
@@ -245,6 +248,7 @@ Player plCreate(int16 x, int16 y) {
     pl.deathTimer = DEATH_INTERVAL * DEATH_MAX;
     pl.respawning = true;
     pl.onWater = false;
+    pl.heightMod = 0;
 
     // Default lives & gems
     pl.lives = PL_LIFE_MAX -2;
