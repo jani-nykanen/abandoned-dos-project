@@ -484,6 +484,7 @@ void stageParseObjects(Stage* s, void* p) {
                 // Enemy
                 case 16:
                 case 17:
+                case 18:
 
                     objmanAddEnemy(oman, x, y, tileID-16);
                     break;

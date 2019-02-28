@@ -33,8 +33,9 @@ static void enemyInitSpecific(Enemy* e, int16 x, int16 y) {
 
     switch (e->id) {
 
-        // Walker
+        // Walker & bird
         case 0:
+        case 2:
             e->speed.x = WALKER_SPEED * (x % 2 == 0 ? 1 : -1);
             e->pos.y += FIXED_PREC;
             break;
@@ -110,6 +111,7 @@ static void enemyMove(Enemy* e, int16 steps) {
         // "Uniformly" moving objects
         case 0:
         case 1:
+        case 2:
             e->pos.x += e->speed.x * steps;
             e->pos.y += e->speed.y * steps;
             break;
@@ -130,8 +132,9 @@ static void enemyAnimate(Enemy* e, int16 steps) {
 
     switch (e->id) {
 
-        // Walker
+        // Walker & bir
         case 0:
+        case 2:
             animSpeed = WALK_SPEED;
             e->flip = e->speed.x > 0;
             break;
@@ -255,6 +258,8 @@ void enemyStageCollision(Enemy* e, Stage* s) {
 void enemyBlockCollision(Enemy* e, 
     int16 x, int16 y, int16 w, int16 h) {
 
+    const int16 OFFSET = 2;
+
     int16 px = e->pos.x / FIXED_PREC;
     int16 py = e->pos.y / FIXED_PREC;
 
@@ -262,7 +267,8 @@ void enemyBlockCollision(Enemy* e,
     int16 my = y + h/2;
 
     // If not inside the block
-    if(px-e->width/2 >= x+w || px+e->width/2 <= x || py <= y || py-e->height >= y+h)
+    if(px-e->width/2 >= x+w-OFFSET || px+e->width/2 <= x+OFFSET || 
+       py <= y+OFFSET || py-e->height >= y+h-OFFSET)
         return;
 
     // Left & right
